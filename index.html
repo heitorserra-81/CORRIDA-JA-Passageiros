@@ -1,1 +1,1022 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Corrida Já</title>
+<meta name="theme-color" content="#c2410c"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Corrida Já"/>
+<link rel="manifest" id="manifest-link"/>
+<link rel="apple-touch-icon" id="apple-icon"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --laranja:#e8611a;--laranja-escuro:#c2410c;--laranja-claro:#fb923c;
+  --dourado:#f59e0b;--dourado-claro:#fcd34d;
+  --bg:#1a0a00;--bg2:#2a1200;--card:#1f0e00;--card2:#2d1500;
+  --border:rgba(245,158,11,0.15);--text:#fef3e2;--muted:#a87d5a;
+  --success:#22c55e;--danger:#ef4444;
+}
+html,body{height:100%;background:var(--bg);font-family:-apple-system,'Helvetica Neue',sans-serif;color:var(--text);overflow:hidden;}
+.screen{display:none;position:fixed;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-direction:column;}
+.screen.ativo{display:flex;}
 
+/* SPLASH */
+#tela-splash{background:linear-gradient(160deg,#2d0f00,#1a0a00,#0f0500);align-items:center;justify-content:center;gap:24px;}
+.splash-logo{width:140px;height:140px;border-radius:36px;background:linear-gradient(135deg,var(--laranja-escuro),var(--laranja));display:flex;align-items:center;justify-content:center;box-shadow:0 0 60px rgba(232,97,26,0.4);animation:logoPulse 2s ease-in-out infinite;}
+@keyframes logoPulse{0%,100%{box-shadow:0 0 60px rgba(232,97,26,0.4);}50%{box-shadow:0 0 90px rgba(232,97,26,0.65);}}
+.splash-title{font-size:38px;font-weight:900;color:#fff;text-align:center;line-height:1;}
+.splash-title span{background:linear-gradient(135deg,var(--dourado),var(--laranja-claro));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.splash-sub{font-size:14px;color:var(--muted);text-align:center;}
+.splash-loader{width:48px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;margin-top:8px;}
+.splash-loader::after{content:'';display:block;height:100%;width:40%;background:linear-gradient(90deg,var(--dourado),var(--laranja));border-radius:2px;animation:loader 1.2s ease-in-out infinite;}
+@keyframes loader{0%{transform:translateX(-100%);}100%{transform:translateX(350%);}}
+
+/* LOGIN */
+#tela-login{background:linear-gradient(160deg,#2d0f00,#1a0a00);padding-bottom:40px;min-height:100%;}
+.login-header{padding:60px 24px 32px;text-align:center;}
+.login-logo{width:80px;height:80px;border-radius:22px;background:linear-gradient(135deg,var(--laranja-escuro),var(--laranja));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 32px rgba(232,97,26,0.35);}
+.login-header h1{font-size:28px;font-weight:900;color:#fff;margin-bottom:6px;}
+.login-header p{font-size:14px;color:var(--muted);}
+.login-body{padding:0 24px;display:flex;flex-direction:column;gap:14px;}
+.modo-tabs{display:flex;background:var(--card);border-radius:16px;padding:4px;border:1px solid var(--border);}
+.modo-tab{flex:1;padding:9px 4px;border-radius:12px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:inherit;}
+.modo-tab.ativo{background:linear-gradient(135deg,var(--laranja-escuro),var(--laranja));color:#fff;box-shadow:0 4px 12px rgba(232,97,26,0.3);}
+.campo-label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;}
+.campo-input{width:100%;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:14px;color:var(--text);font-size:15px;font-family:inherit;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
+.campo-input:focus{border-color:var(--laranja);}
+.campo-input::placeholder{color:var(--muted);}
+.foto-upload-btn{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:14px;cursor:pointer;}
+.foto-circle-preview{width:52px;height:52px;border-radius:50%;background:var(--card2);border:2px dashed rgba(245,158,11,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.foto-circle-preview img{width:100%;height:100%;object-fit:cover;}
+.foto-upload-text strong{display:block;font-size:14px;color:var(--text);margin-bottom:2px;}
+.foto-upload-text span{font-size:12px;color:var(--muted);}
+#input-foto-raw{display:none;}
+.btn-principal{width:100%;padding:16px;border-radius:16px;background:linear-gradient(135deg,var(--laranja-escuro),var(--laranja));border:none;color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 8px 24px rgba(232,97,26,0.35);transition:opacity 0.2s,transform 0.1s;}
+.btn-principal:active{opacity:0.85;transform:scale(0.98);}
+.btn-secundario{width:100%;padding:14px;border-radius:16px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+
+/* RECORTE */
+#modal-recorte{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.93);flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;}
+#modal-recorte.show{display:flex;}
+.recorte-titulo{font-size:18px;font-weight:700;color:#fff;text-align:center;}
+.recorte-sub{font-size:13px;color:var(--muted);text-align:center;}
+.recorte-container{position:relative;width:280px;height:280px;overflow:hidden;border-radius:16px;background:#111;touch-action:none;border:2px solid var(--border);}
+#recorte-img{position:absolute;transform-origin:center center;cursor:grab;user-select:none;-webkit-user-select:none;}
+.recorte-circulo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:220px;height:220px;border-radius:50%;border:3px solid var(--laranja);box-shadow:0 0 0 9999px rgba(0,0,0,0.55);pointer-events:none;}
+.recorte-zoom{display:flex;align-items:center;gap:12px;width:100%;}
+.recorte-zoom span{font-size:20px;cursor:pointer;color:var(--muted);}
+.recorte-zoom input{flex:1;accent-color:var(--laranja);}
+.recorte-btns{display:flex;gap:10px;width:100%;}
+.btn-recorte-ok{flex:1;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--laranja-escuro),var(--laranja));border:none;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-recorte-cancel{flex:1;padding:14px;border-radius:14px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:15px;cursor:pointer;font-family:inherit;}
+
+/* HOME */
+#tela-home{background:var(--bg);padding-bottom:80px;}
+.home-header{padding:56px 20px 20px;padding-top:max(56px,calc(env(safe-area-inset-top) + 20px));background:linear-gradient(180deg,#2d0f00,transparent);}
+.home-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.home-saudacao{font-size:13px;color:var(--muted);margin-bottom:2px;}
+.home-nome{font-size:20px;font-weight:800;color:#fff;}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--card2);border:2px solid var(--laranja);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;}
+.avatar img{width:100%;height:100%;object-fit:cover;}
+.avatar-initials{font-size:16px;font-weight:700;color:var(--laranja);}
+.destino-card{margin:0 20px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.destino-titulo{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
+.destino-field{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card2);border-radius:14px;border:1px solid transparent;margin-bottom:8px;transition:border-color 0.2s;}
+.destino-field:last-child{margin-bottom:0;}
+.destino-field:focus-within{border-color:var(--laranja);}
+.destino-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.dot-origem{background:var(--dourado);}
+.dot-destino{background:var(--laranja);}
+.destino-field input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;font-family:inherit;}
+.destino-field input::placeholder{color:var(--muted);}
+.destino-linha{width:1px;height:20px;background:var(--border);margin:2px 0 2px 19px;}
+
+/* OBSERVAÇÃO */
+.obs-field{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--card2);border-radius:14px;border:1px dashed rgba(245,158,11,0.2);margin:8px 20px 0;}
+.obs-field input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:13px;font-family:inherit;}
+.obs-field input::placeholder{color:var(--muted);}
+
+/* ESTIMATIVA */
+.estimativa-box{margin:12px 20px 0;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:none;}
+.estimativa-box.show{display:block;}
+.estimativa-titulo{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:10px;}
+.estimativa-row{display:flex;gap:8px;}
+.estimativa-item{flex:1;background:var(--card2);border-radius:12px;padding:10px;text-align:center;}
+.estimativa-val{font-size:18px;font-weight:800;color:#fff;margin-bottom:2px;}
+.estimativa-label{font-size:11px;color:var(--muted);}
+.estimativa-item.destaque .estimativa-val{color:var(--dourado);}
+
+.btn-chamar{display:flex;align-items:center;justify-content:center;gap:10px;width:calc(100% - 40px);margin:16px 20px 0;padding:18px;border-radius:18px;background:linear-gradient(135deg,var(--laranja-escuro),var(--laranja));border:none;color:#fff;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 8px 28px rgba(232,97,26,0.4);transition:opacity 0.2s,transform 0.1s;}
+.btn-chamar:active{opacity:0.85;transform:scale(0.98);}
+.mapa-wrap{margin:16px 20px;border-radius:20px;overflow:hidden;border:1px solid var(--border);height:200px;background:var(--card);position:relative;}
+#mapa-home{height:100%;width:100%;}
+.mapa-label{position:absolute;top:10px;left:10px;z-index:999;background:rgba(26,10,0,0.85);border:1px solid var(--border);border-radius:10px;padding:5px 10px;font-size:11px;font-weight:600;color:var(--dourado);letter-spacing:0.5px;backdrop-filter:blur(8px);}
+.secao-titulo{padding:16px 20px 10px;font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;}
+.historico-item{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid rgba(245,158,11,0.06);cursor:pointer;}
+.historico-icon{width:40px;height:40px;border-radius:12px;background:var(--card2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;}
+.historico-info{flex:1;}
+.historico-local{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.historico-data{font-size:12px;color:var(--muted);}
+.historico-valor{font-size:14px;font-weight:700;color:var(--dourado);}
+
+/* BUSCANDO */
+#tela-buscando{background:var(--bg);align-items:center;justify-content:center;gap:0;padding:40px 24px;}
+.buscando-anim{position:relative;width:160px;height:160px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;}
+.onda{position:absolute;border-radius:50%;border:2px solid var(--laranja);animation:onda 2s ease-out infinite;opacity:0;}
+.onda:nth-child(1){width:80px;height:80px;animation-delay:0s;}
+.onda:nth-child(2){width:120px;height:120px;animation-delay:0.5s;}
+.onda:nth-child(3){width:160px;height:160px;animation-delay:1s;}
+@keyframes onda{0%{opacity:0.8;transform:scale(0.8);}100%{opacity:0;transform:scale(1.1);}}
+.buscando-icone{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--laranja-escuro),var(--laranja));display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 0 30px rgba(232,97,26,0.4);}
+.buscando-titulo{font-size:24px;font-weight:900;color:#fff;text-align:center;margin-bottom:6px;}
+.buscando-sub{font-size:14px;color:var(--muted);text-align:center;line-height:1.5;margin-bottom:16px;}
+
+/* CONTADOR */
+.contador-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 20px;text-align:center;width:100%;margin-bottom:14px;}
+.contador-num{font-size:32px;font-weight:900;color:var(--laranja);line-height:1;}
+.contador-label{font-size:12px;color:var(--muted);margin-top:4px;}
+
+.destino-resumo{width:100%;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px;}
+.destino-resumo-row{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text);padding:6px 0;}
+.destino-resumo-row:first-child{border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:4px;}
+.destino-resumo-row span{color:var(--muted);font-size:12px;flex-shrink:0;min-width:60px;}
+
+/* BOTÕES BUSCANDO */
+.buscando-btns{display:flex;gap:10px;width:100%;}
+.btn-compartilhar-loc{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:13px;border-radius:16px;background:#25d366;border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-cancelar{flex:1;padding:13px;border-radius:16px;background:transparent;border:1px solid rgba(239,68,68,0.3);color:#ef4444;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+
+/* EM CORRIDA */
+#tela-corrida{background:var(--bg);flex-direction:column;}
+#mapa-corrida{flex:1;min-height:50vh;}
+.corrida-painel{background:var(--card);border-top:1px solid var(--border);border-radius:24px 24px 0 0;padding:20px 20px 40px;padding-bottom:max(40px,calc(env(safe-area-inset-bottom) + 20px));}
+.corrida-status{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.status-dot{width:10px;height:10px;border-radius:50%;background:var(--success);box-shadow:0 0 8px var(--success);animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.6;transform:scale(0.85);}}
+.status-texto{font-size:14px;font-weight:700;color:var(--success);}
+.motorista-card{display:flex;align-items:center;gap:14px;padding:14px;background:var(--card2);border-radius:16px;border:1px solid var(--border);margin-bottom:14px;}
+.motorista-foto{width:52px;height:52px;border-radius:50%;background:var(--bg);border:2px solid var(--laranja);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-size:22px;}
+.motorista-foto img{width:100%;height:100%;object-fit:cover;}
+.motorista-info{flex:1;}
+.motorista-nome{font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;}
+.motorista-placa{display:inline-block;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;color:var(--dourado);letter-spacing:1px;}
+.motorista-avaliacao{font-size:13px;color:var(--muted);margin-top:3px;}
+.eta-badge{text-align:center;flex-shrink:0;}
+.eta-num{font-size:24px;font-weight:900;color:var(--laranja);line-height:1;}
+.eta-unit{font-size:11px;color:var(--muted);}
+.corrida-info-row{display:flex;gap:10px;margin-bottom:14px;}
+.corrida-info-item{flex:1;background:var(--card2);border-radius:14px;padding:12px;text-align:center;border:1px solid var(--border);}
+.corrida-info-val{font-size:18px;font-weight:800;color:#fff;margin-bottom:2px;}
+.corrida-info-label{font-size:11px;color:var(--muted);}
+.corrida-btns{display:flex;gap:10px;}
+.btn-whatsapp{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:16px;background:#25d366;border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-loc-corrida{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:16px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
+
+/* AVALIAÇÃO */
+#tela-avaliacao{background:linear-gradient(160deg,#2d0f00,#1a0a00);align-items:center;justify-content:center;padding:40px 24px;gap:18px;}
+.aval-icone{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--laranja-escuro),var(--laranja));display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 0 40px rgba(232,97,26,0.3);}
+.aval-titulo{font-size:24px;font-weight:900;color:#fff;text-align:center;}
+.aval-sub{font-size:14px;color:var(--muted);text-align:center;}
+.estrelas{display:flex;gap:12px;justify-content:center;}
+.estrela{font-size:40px;cursor:pointer;filter:grayscale(1) brightness(0.5);transition:filter 0.15s,transform 0.15s;-webkit-tap-highlight-color:transparent;}
+.estrela.ativa{filter:none;transform:scale(1.1);}
+.aval-resumo{width:100%;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;}
+.aval-resumo-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:14px;}
+.aval-resumo-row:not(:last-child){border-bottom:1px solid var(--border);}
+.aval-resumo-label{color:var(--muted);}
+.aval-resumo-val{font-weight:700;color:#fff;}
+.aval-resumo-val.destaque{color:var(--dourado);font-size:18px;}
+
+/* HISTÓRICO */
+#tela-historico{background:var(--bg);padding-bottom:80px;}
+.historico-header{background:linear-gradient(180deg,#2d0f00,transparent);padding:56px 20px 24px;padding-top:max(56px,calc(env(safe-area-inset-top) + 20px));}
+.historico-header h2{font-size:22px;font-weight:800;color:#fff;}
+.historico-card{margin:8px 20px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;}
+.historico-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.historico-card-status{font-size:11px;font-weight:700;padding:3px 8px;border-radius:8px;letter-spacing:0.5px;}
+.status-concluida{background:rgba(34,197,94,0.12);color:#22c55e;}
+.status-cancelada{background:rgba(239,68,68,0.12);color:#ef4444;}
+.historico-card-data{font-size:12px;color:var(--muted);}
+.historico-card-rota{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.historico-rota-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);}
+.historico-rota-item span{color:var(--muted);font-size:11px;min-width:50px;}
+.historico-card-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--border);}
+.historico-card-motorista{font-size:13px;color:var(--muted);}
+.historico-card-valor{font-size:18px;font-weight:800;color:var(--dourado);}
+
+/* PERFIL */
+#tela-perfil{background:var(--bg);padding-bottom:80px;}
+.perfil-header{background:linear-gradient(180deg,#2d0f00,transparent);padding:56px 20px 24px;padding-top:max(56px,calc(env(safe-area-inset-top) + 20px));}
+.perfil-header h2{font-size:22px;font-weight:800;color:#fff;margin-bottom:4px;}
+.perfil-header p{font-size:13px;color:var(--muted);}
+.perfil-card{margin:0 20px 16px;background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
+.perfil-user{display:flex;align-items:center;gap:14px;padding:20px;border-bottom:1px solid var(--border);}
+.perfil-avatar{width:64px;height:64px;border-radius:50%;background:var(--card2);border:3px solid var(--laranja);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:26px;font-weight:700;color:var(--laranja);}
+.perfil-avatar img{width:100%;height:100%;object-fit:cover;}
+.perfil-nome{font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;}
+.perfil-fone{font-size:13px;color:var(--muted);}
+.perfil-badge{display:inline-flex;align-items:center;gap:4px;margin-top:6px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);border-radius:8px;padding:3px 8px;font-size:11px;font-weight:700;color:var(--dourado);}
+.perfil-menu-item{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid rgba(245,158,11,0.05);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.perfil-menu-item:last-child{border-bottom:none;}
+.perfil-menu-icon{width:38px;height:38px;border-radius:12px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.perfil-menu-text{flex:1;}
+.perfil-menu-title{font-size:14px;font-weight:600;color:var(--text);}
+.perfil-menu-sub{font-size:12px;color:var(--muted);}
+.perfil-menu-arrow{color:var(--muted);font-size:18px;}
+.btn-sair{margin:0 20px;width:calc(100% - 40px);padding:15px;border-radius:16px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#ef4444;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;padding-bottom:max(12px,env(safe-area-inset-bottom,12px));z-index:100;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 0;gap:4px;cursor:pointer;-webkit-tap-highlight-color:transparent;border:none;background:none;font-family:inherit;}
+.nav-icon{font-size:22px;}
+.nav-label{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0.3px;}
+.nav-item.ativo .nav-label{color:var(--laranja);}
+
+/* TOAST */
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:#1f0e00;border:1px solid var(--border);border-radius:14px;padding:12px 20px;font-size:13px;font-weight:600;color:var(--text);z-index:9999;opacity:0;transition:all 0.3s ease;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.4);pointer-events:none;max-width:90vw;white-space:normal;text-align:center;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#loading{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9998;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+#loading.show{display:flex;}
+.loading-spinner{width:48px;height:48px;border:3px solid rgba(232,97,26,0.2);border-top-color:var(--laranja);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div class="screen ativo" id="tela-splash">
+  <div class="splash-logo">
+    <svg viewBox="0 0 80 80" width="70" height="70" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="34" width="60" height="22" rx="8" fill="#fcd34d"/>
+      <rect x="18" y="24" width="40" height="16" rx="6" fill="#fef3c7"/>
+      <circle cx="22" cy="58" r="8" fill="#1a0a00"/><circle cx="22" cy="58" r="4" fill="#f59e0b"/>
+      <circle cx="58" cy="58" r="8" fill="#1a0a00"/><circle cx="58" cy="58" r="4" fill="#f59e0b"/>
+      <line x1="2" y1="38" x2="10" y2="38" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="4" y1="44" x2="10" y2="44" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="splash-title">Corrida<br/><span>Já</span></div>
+  <div class="splash-sub">Seu transporte em minutos</div>
+  <div class="splash-loader"></div>
+</div>
+
+<!-- LOGIN -->
+<div class="screen" id="tela-login">
+  <div class="login-header">
+    <div class="login-logo">
+      <svg viewBox="0 0 80 80" width="50" height="50" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="34" width="60" height="22" rx="8" fill="#fcd34d"/>
+        <rect x="18" y="24" width="40" height="16" rx="6" fill="#fef3c7"/>
+        <circle cx="22" cy="58" r="8" fill="#1a0a00"/><circle cx="22" cy="58" r="4" fill="#f59e0b"/>
+        <circle cx="58" cy="58" r="8" fill="#1a0a00"/><circle cx="58" cy="58" r="4" fill="#f59e0b"/>
+      </svg>
+    </div>
+    <h1>Corrida Já</h1>
+    <p>Seu transporte em minutos</p>
+  </div>
+  <div class="login-body">
+    <div class="modo-tabs">
+      <button class="modo-tab ativo" id="tab-cadastro" onclick="alternarModo('cadastro')">Criar conta</button>
+      <button class="modo-tab" id="tab-entrar" onclick="alternarModo('entrar')">Entrar</button>
+      <button class="modo-tab" id="tab-rapido" onclick="alternarModo('rapido')">Sem conta</button>
+    </div>
+    <div id="form-cadastro">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div><div class="campo-label">Seu nome</div><input class="campo-input" id="cad-nome" type="text" placeholder="Como quer ser chamado?" autocomplete="name"/></div>
+        <div><div class="campo-label">WhatsApp</div><input class="campo-input" id="cad-fone" type="tel" placeholder="(19) 99999-9999" autocomplete="tel"/></div>
+        <div>
+          <div class="campo-label">Foto de perfil (opcional)</div>
+          <div class="foto-upload-btn" onclick="document.getElementById('input-foto-raw').click()">
+            <div class="foto-circle-preview" id="foto-preview">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="foto-upload-text">
+              <strong id="foto-btn-texto">Adicionar foto</strong>
+              <span>Toque para escolher e recortar</span>
+            </div>
+          </div>
+          <input type="file" id="input-foto-raw" accept="image/*" onchange="abrirRecorte(this)"/>
+        </div>
+        <button class="btn-principal" onclick="cadastrar()">Criar minha conta</button>
+      </div>
+    </div>
+    <div id="form-entrar" style="display:none;">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div><div class="campo-label">WhatsApp cadastrado</div><input class="campo-input" id="login-fone" type="tel" placeholder="(19) 99999-9999" autocomplete="tel"/></div>
+        <button class="btn-principal" onclick="entrar()">Entrar</button>
+      </div>
+    </div>
+    <div id="form-rapido" style="display:none;">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:14px;padding:14px;font-size:13px;color:var(--muted);line-height:1.5;">⚡ Você pode pedir sem criar conta.</div>
+        <div><div class="campo-label">Seu nome (opcional)</div><input class="campo-input" id="rapido-nome" type="text" placeholder="Como chamar você?"/></div>
+        <button class="btn-principal" onclick="entrarRapido()">Continuar sem conta</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RECORTE -->
+<div id="modal-recorte">
+  <div class="recorte-titulo">Ajustar foto de perfil</div>
+  <div class="recorte-sub">Arraste e use o zoom para encaixar seu rosto</div>
+  <div class="recorte-container" id="recorte-container">
+    <img id="recorte-img" draggable="false"/>
+    <div style="position:absolute;inset:0;pointer-events:none;">
+      <div class="recorte-circulo"></div>
+    </div>
+  </div>
+  <div class="recorte-zoom">
+    <span onclick="zoomRecorte(-0.05)">🔍</span>
+    <input type="range" id="zoom-slider" min="0.5" max="4" step="0.05" value="1" oninput="aplicarZoom(parseFloat(this.value))"/>
+    <span onclick="zoomRecorte(0.05)">🔎</span>
+  </div>
+  <div class="recorte-btns">
+    <button class="btn-recorte-cancel" onclick="fecharRecorte()">Cancelar</button>
+    <button class="btn-recorte-ok" onclick="confirmarRecorte()">Usar esta foto ✓</button>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="tela-home">
+  <div class="home-header">
+    <div class="home-header-top">
+      <div><div class="home-saudacao" id="saudacao">Bom dia!</div><div class="home-nome" id="home-nome">Olá, passageiro</div></div>
+      <div class="avatar" id="home-avatar" onclick="irPara('perfil')"><div class="avatar-initials" id="home-initial">👤</div></div>
+    </div>
+  </div>
+  <div class="destino-card">
+    <div class="destino-titulo">Para onde você vai?</div>
+    <div class="destino-field">
+      <div class="destino-dot dot-origem"></div>
+      <input id="campo-origem" type="text" placeholder="Sua localização atual" readonly style="cursor:pointer;" onclick="usarGPS()"/>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" onclick="usarGPS()" style="cursor:pointer;flex-shrink:0;"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+    </div>
+    <div class="destino-linha"></div>
+    <div class="destino-field">
+      <div class="destino-dot dot-destino"></div>
+      <input id="campo-destino" type="text" placeholder="Destino" oninput="calcularEstimativa()"/>
+    </div>
+  </div>
+
+  <!-- Observação -->
+  <div class="obs-field">
+    <span style="font-size:16px;">📝</span>
+    <input id="campo-obs" type="text" placeholder="Observação para o motorista (opcional)"/>
+  </div>
+
+  <!-- Estimativa de preço -->
+  <div class="estimativa-box" id="estimativa-box">
+    <div class="estimativa-titulo">Estimativa da corrida</div>
+    <div class="estimativa-row">
+      <div class="estimativa-item"><div class="estimativa-val" id="est-dist">—</div><div class="estimativa-label">Distância</div></div>
+      <div class="estimativa-item"><div class="estimativa-val" id="est-tempo">—</div><div class="estimativa-label">Tempo aprox.</div></div>
+      <div class="estimativa-item destaque"><div class="estimativa-val" id="est-valor">—</div><div class="estimativa-label">Valor</div></div>
+    </div>
+  </div>
+
+  <button class="btn-chamar" onclick="pedirCorrida()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    Chamar motorista
+  </button>
+  <div class="mapa-wrap"><div class="mapa-label">📍 Sua região</div><div id="mapa-home"></div></div>
+  <div class="secao-titulo">Últimas corridas</div>
+  <div id="lista-historico-home"><div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">Nenhuma corrida ainda</div></div>
+  <div class="bottom-nav">
+    <button class="nav-item ativo" onclick="irPara('home')"><div class="nav-icon">🏠</div><div class="nav-label">Início</div></button>
+    <button class="nav-item" onclick="irPara('historico')"><div class="nav-icon">🕐</div><div class="nav-label">Histórico</div></button>
+    <button class="nav-item" onclick="irPara('perfil')"><div class="nav-icon">👤</div><div class="nav-label">Perfil</div></button>
+  </div>
+</div>
+
+<!-- BUSCANDO -->
+<div class="screen" id="tela-buscando">
+  <div class="buscando-anim">
+    <div class="onda"></div><div class="onda"></div><div class="onda"></div>
+    <div class="buscando-icone">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    </div>
+  </div>
+  <div class="buscando-titulo">Buscando motorista...</div>
+  <div class="buscando-sub">Aguarde enquanto localizamos<br/>um motorista próximo a você</div>
+
+  <!-- Contador de espera -->
+  <div class="contador-box">
+    <div class="contador-num" id="contador-num">0:00</div>
+    <div class="contador-label">Tempo aguardando</div>
+  </div>
+
+  <div class="destino-resumo">
+    <div class="destino-resumo-row"><span>🟡 Origem</span><div id="resumo-origem">—</div></div>
+    <div class="destino-resumo-row"><span>🔴 Destino</span><div id="resumo-destino">—</div></div>
+    <div class="destino-resumo-row" id="resumo-obs-row" style="display:none;"><span>📝 Obs.</span><div id="resumo-obs">—</div></div>
+    <div class="destino-resumo-row"><span>💰 Valor</span><div id="resumo-valor" style="color:var(--dourado);font-weight:700;">—</div></div>
+  </div>
+
+  <div class="buscando-btns">
+    <button class="btn-compartilhar-loc" onclick="compartilharLocalizacao()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Compartilhar local
+    </button>
+    <button class="btn-cancelar" onclick="cancelarCorrida()">Cancelar</button>
+  </div>
+</div>
+
+<!-- EM CORRIDA -->
+<div class="screen" id="tela-corrida">
+  <div id="mapa-corrida"></div>
+  <div class="corrida-painel">
+    <div class="corrida-status"><div class="status-dot"></div><div class="status-texto" id="corrida-status-texto">Motorista a caminho</div></div>
+    <div class="motorista-card">
+      <div class="motorista-foto" id="corrida-motorista-foto">🏍️</div>
+      <div class="motorista-info">
+        <div class="motorista-nome" id="corrida-motorista-nome">—</div>
+        <div class="motorista-placa" id="corrida-motorista-placa">—</div>
+        <div class="motorista-avaliacao" id="corrida-motorista-aval">⭐ 5.0</div>
+      </div>
+      <div class="eta-badge"><div class="eta-num" id="corrida-eta">—</div><div class="eta-unit">min</div></div>
+    </div>
+    <div class="corrida-info-row">
+      <div class="corrida-info-item"><div class="corrida-info-val" id="corrida-dist">—</div><div class="corrida-info-label">Distância</div></div>
+      <div class="corrida-info-item"><div class="corrida-info-val" id="corrida-valor" style="color:var(--dourado);">—</div><div class="corrida-info-label">Valor</div></div>
+      <div class="corrida-info-item"><div class="corrida-info-val">💵</div><div class="corrida-info-label">Pagamento</div></div>
+    </div>
+    <div class="corrida-btns">
+      <button class="btn-whatsapp" id="btn-whatsapp-motorista">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Falar
+      </button>
+      <button class="btn-loc-corrida" onclick="compartilharLocalizacao()">
+        📍 Minha localização
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- AVALIAÇÃO -->
+<div class="screen" id="tela-avaliacao">
+  <div class="aval-icone">✅</div>
+  <div class="aval-titulo">Corrida concluída!</div>
+  <div class="aval-sub">Como foi sua experiência?</div>
+  <div class="estrelas" id="estrelas">
+    <span class="estrela" onclick="avaliar(1)">⭐</span>
+    <span class="estrela" onclick="avaliar(2)">⭐</span>
+    <span class="estrela" onclick="avaliar(3)">⭐</span>
+    <span class="estrela" onclick="avaliar(4)">⭐</span>
+    <span class="estrela" onclick="avaliar(5)">⭐</span>
+  </div>
+  <div class="aval-resumo">
+    <div class="aval-resumo-row"><span class="aval-resumo-label">Destino</span><span class="aval-resumo-val" id="aval-destino">—</span></div>
+    <div class="aval-resumo-row"><span class="aval-resumo-label">Motorista</span><span class="aval-resumo-val" id="aval-motorista">—</span></div>
+    <div class="aval-resumo-row"><span class="aval-resumo-label">Valor</span><span class="aval-resumo-val destaque" id="aval-valor-corrida">R$ 0,00</span></div>
+  </div>
+  <button class="btn-principal" style="width:100%;" onclick="finalizarAvaliacao()">Confirmar avaliação</button>
+  <button class="btn-secundario" onclick="irPara('home')">Pular</button>
+</div>
+
+<!-- HISTÓRICO -->
+<div class="screen" id="tela-historico">
+  <div class="historico-header"><h2>Histórico</h2></div>
+  <div id="lista-historico"></div>
+  <div class="bottom-nav">
+    <button class="nav-item" onclick="irPara('home')"><div class="nav-icon">🏠</div><div class="nav-label">Início</div></button>
+    <button class="nav-item ativo" onclick="irPara('historico')"><div class="nav-icon">🕐</div><div class="nav-label">Histórico</div></button>
+    <button class="nav-item" onclick="irPara('perfil')"><div class="nav-icon">👤</div><div class="nav-label">Perfil</div></button>
+  </div>
+</div>
+
+<!-- PERFIL -->
+<div class="screen" id="tela-perfil">
+  <div class="perfil-header"><h2>Perfil</h2><p>Gerencie sua conta</p></div>
+  <div class="perfil-card">
+    <div class="perfil-user">
+      <div class="perfil-avatar" id="perfil-avatar">👤</div>
+      <div><div class="perfil-nome" id="perfil-nome">—</div><div class="perfil-fone" id="perfil-fone">—</div><div class="perfil-badge">⭐ Passageiro verificado</div></div>
+    </div>
+    <div class="perfil-menu-item" onclick="irPara('historico')">
+      <div class="perfil-menu-icon">📋</div>
+      <div class="perfil-menu-text"><div class="perfil-menu-title">Minhas corridas</div><div class="perfil-menu-sub" id="perfil-total-corridas">0 corridas realizadas</div></div>
+      <div class="perfil-menu-arrow">›</div>
+    </div>
+    <div class="perfil-menu-item">
+      <div class="perfil-menu-icon">💳</div>
+      <div class="perfil-menu-text"><div class="perfil-menu-title">Pagamento</div><div class="perfil-menu-sub">Dinheiro / PIX direto ao motorista</div></div>
+      <div class="perfil-menu-arrow">›</div>
+    </div>
+  </div>
+  <button class="btn-sair" onclick="sair()">Sair da conta</button>
+  <div style="text-align:center;margin-top:24px;font-size:11px;color:rgba(255,255,255,0.15);">Corrida Já · Desenvolvido por Heitor Serra Neto</div>
+  <div class="bottom-nav">
+    <button class="nav-item" onclick="irPara('home')"><div class="nav-icon">🏠</div><div class="nav-label">Início</div></button>
+    <button class="nav-item" onclick="irPara('historico')"><div class="nav-icon">🕐</div><div class="nav-label">Histórico</div></button>
+    <button class="nav-item ativo" onclick="irPara('perfil')"><div class="nav-icon">👤</div><div class="nav-label">Perfil</div></button>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="loading"><div class="loading-spinner"></div></div>
+
+<script>
+// ── FIREBASE ──
+const firebaseConfig={apiKey:"AIzaSyAts9fsoZ_GrF3MRHDRlAw61Xti2uBkdnM",authDomain:"staffcheck-d6f20.firebaseapp.com",projectId:"staffcheck-d6f20",storageBucket:"staffcheck-d6f20.firebasestorage.app",messagingSenderId:"1055570421019",appId:"1:1055570421019:web:7b5dcc564bfe1c30189fbe"};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+
+// ── ESTADO ──
+let usuario=null,corridaAtiva=null,mapaHome=null,mapaCorrida=null;
+let marcadorMotorista=null,unsubCorrida=null,avaliacao=5,fotoFinal=null,posicaoAtual=null;
+let contadorInterval=null,contadorSeg=0;
+
+// ── TABELA DE PREÇOS ──
+const TABELA=[
+  {ate:2,  preco:8},
+  {ate:5,  preco:12},
+  {ate:10, preco:18},
+  {ate:20, preco:25},
+  {ate:999,preco:35}
+];
+function calcularPreco(km){
+  for(const t of TABELA){ if(km<=t.ate) return t.preco; }
+  return 35;
+}
+function distanciaKm(lat1,lng1,lat2,lng2){
+  const R=6371;
+  const dLat=(lat2-lat1)*Math.PI/180;
+  const dLng=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+// ── ESTIMATIVA ──
+let geocodeTimer=null;
+function calcularEstimativa(){
+  const dest=document.getElementById('campo-destino').value.trim();
+  if(!dest||!posicaoAtual){document.getElementById('estimativa-box').classList.remove('show');return;}
+  clearTimeout(geocodeTimer);
+  geocodeTimer=setTimeout(async()=>{
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(dest)}&limit=1&countrycodes=br`);
+      const j=await r.json();
+      if(!j.length){document.getElementById('estimativa-box').classList.remove('show');return;}
+      const dlat=parseFloat(j[0].lat),dlng=parseFloat(j[0].lon);
+      const km=distanciaKm(posicaoAtual[0],posicaoAtual[1],dlat,dlng);
+      const preco=calcularPreco(km);
+      const tempo=Math.round(km/0.5); // ~30km/h em cidade
+      document.getElementById('est-dist').textContent=km.toFixed(1)+' km';
+      document.getElementById('est-tempo').textContent=tempo+' min';
+      document.getElementById('est-valor').textContent='R$ '+preco.toFixed(2).replace('.',',');
+      document.getElementById('estimativa-box').classList.add('show');
+    }catch(e){document.getElementById('estimativa-box').classList.remove('show');}
+  },800);
+}
+
+// ── SOM NOTIFICAÇÃO ──
+function tocarSom(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    [523,659,784].forEach((freq,i)=>{
+      const o=ctx.createOscillator();
+      const g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=freq;
+      o.type='sine';
+      g.gain.setValueAtTime(0,ctx.currentTime+i*0.15);
+      g.gain.linearRampToValueAtTime(0.3,ctx.currentTime+i*0.15+0.05);
+      g.gain.linearRampToValueAtTime(0,ctx.currentTime+i*0.15+0.2);
+      o.start(ctx.currentTime+i*0.15);
+      o.stop(ctx.currentTime+i*0.15+0.25);
+    });
+  }catch(e){}
+}
+
+// ── CONTADOR ──
+function iniciarContador(){
+  contadorSeg=0;
+  if(contadorInterval) clearInterval(contadorInterval);
+  contadorInterval=setInterval(()=>{
+    contadorSeg++;
+    const m=Math.floor(contadorSeg/60);
+    const s=contadorSeg%60;
+    document.getElementById('contador-num').textContent=m+':'+(s<10?'0':'')+s;
+  },1000);
+}
+function pararContador(){ if(contadorInterval){ clearInterval(contadorInterval); contadorInterval=null; } }
+
+// ── COMPARTILHAR LOCALIZAÇÃO ──
+function compartilharLocalizacao(){
+  if(!posicaoAtual){toast('Ative sua localização primeiro');return;}
+  const url=`https://maps.google.com/maps?q=${posicaoAtual[0]},${posicaoAtual[1]}`;
+  const msg=`📍 Minha localização atual:\n${url}`;
+  if(navigator.share){navigator.share({title:'Minha localização',text:msg}).catch(()=>{});}
+  else{window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');}
+}
+
+// ── RECORTE — CORREÇÃO EXIF ──
+let recorteImgEl=null,recortePosX=0,recortePosY=0,recorteEscala=1,recorteDragging=false;
+let recorteStartX=0,recorteStartY=0,recorteOrigX=0,recorteOrigY=0;
+
+function getExifOrientation(buffer){
+  const view=new DataView(buffer);
+  if(view.getUint16(0,false)!==0xFFD8) return -1;
+  let offset=2;
+  while(offset<view.byteLength){
+    if(view.getUint16(offset,false)===0xFFE1){
+      if(view.getUint32(offset+=2,false)!==0x45786966) return -1;
+      const little=view.getUint16(offset+=6,false)===0x4949;
+      offset+=view.getUint32(offset+4,little);
+      const tags=view.getUint16(offset,little);
+      for(let i=0;i<tags;i++){
+        if(view.getUint16(offset+(i*12)+2,little)===0x0112){
+          return view.getUint16(offset+(i*12)+8,little);
+        }
+      }
+    }
+    offset+=2+view.getUint16(offset+2,false);
+  }
+  return -1;
+}
+
+function corrigirOrientacao(img,orientation,cb){
+  const canvas=document.createElement('canvas');
+  const ctx=canvas.getContext('2d');
+  const w=img.naturalWidth,h=img.naturalHeight;
+  if(orientation>4){canvas.width=h;canvas.height=w;}
+  else{canvas.width=w;canvas.height=h;}
+  switch(orientation){
+    case 2:ctx.transform(-1,0,0,1,w,0);break;
+    case 3:ctx.transform(-1,0,0,-1,w,h);break;
+    case 4:ctx.transform(1,0,0,-1,0,h);break;
+    case 5:ctx.transform(0,1,1,0,0,0);break;
+    case 6:ctx.transform(0,1,-1,0,h,0);break;
+    case 7:ctx.transform(0,-1,-1,0,h,w);break;
+    case 8:ctx.transform(0,-1,1,0,0,w);break;
+    default:ctx.transform(1,0,0,1,0,0);
+  }
+  ctx.drawImage(img,0,0);
+  cb(canvas.toDataURL('image/jpeg',0.9));
+}
+
+function abrirRecorte(input){
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    const arrBuf=e.target.result;
+    const orientation=getExifOrientation(arrBuf);
+    const blob=new Blob([arrBuf],{type:file.type});
+    const url=URL.createObjectURL(blob);
+    const img=new Image();
+    img.onload=()=>{
+      corrigirOrientacao(img,orientation,(dataUrl)=>{
+        const imgEl=document.getElementById('recorte-img');
+        imgEl.src=dataUrl;
+        imgEl.onload=()=>{
+          const cont=document.getElementById('recorte-container');
+          const cw=cont.offsetWidth,ch=cont.offsetHeight;
+          const iw=imgEl.naturalWidth,ih=imgEl.naturalHeight;
+          const eb=Math.max(cw/iw,ch/ih)*1.05;
+          recorteEscala=eb;
+          recortePosX=(cw-iw*eb)/2;
+          recortePosY=(ch-ih*eb)/2;
+          const sl=document.getElementById('zoom-slider');
+          sl.min=eb*0.5;sl.max=eb*4;sl.value=eb;
+          aplicarTransform();
+          document.getElementById('modal-recorte').classList.add('show');
+          recorteImgEl=imgEl;
+        };
+      });
+      URL.revokeObjectURL(url);
+    };
+    img.src=url;
+  };
+  reader.readAsArrayBuffer(file);
+  input.value='';
+}
+
+function aplicarTransform(){
+  if(!recorteImgEl) return;
+  recorteImgEl.style.width=recorteImgEl.naturalWidth*recorteEscala+'px';
+  recorteImgEl.style.height=recorteImgEl.naturalHeight*recorteEscala+'px';
+  recorteImgEl.style.left=recortePosX+'px';
+  recorteImgEl.style.top=recortePosY+'px';
+}
+function aplicarZoom(val){
+  const cont=document.getElementById('recorte-container');
+  const cx=cont.offsetWidth/2,cy=cont.offsetHeight/2;
+  const ratio=val/recorteEscala;
+  recortePosX=cx-(cx-recortePosX)*ratio;
+  recortePosY=cy-(cy-recortePosY)*ratio;
+  recorteEscala=val;
+  aplicarTransform();
+}
+function zoomRecorte(d){
+  const sl=document.getElementById('zoom-slider');
+  const novo=Math.max(parseFloat(sl.min),Math.min(parseFloat(sl.max),recorteEscala+d));
+  sl.value=novo;aplicarZoom(novo);
+}
+function fecharRecorte(){document.getElementById('modal-recorte').classList.remove('show');}
+function confirmarRecorte(){
+  const cont=document.getElementById('recorte-container');
+  const cw=cont.offsetWidth,ch=cont.offsetHeight;
+  const DIAM=220,ox=(cw-DIAM)/2,oy=(ch-DIAM)/2;
+  const canvas=document.createElement('canvas');
+  canvas.width=200;canvas.height=200;
+  const ctx=canvas.getContext('2d');
+  ctx.beginPath();ctx.arc(100,100,100,0,Math.PI*2);ctx.clip();
+  const il=parseFloat(recorteImgEl.style.left),it=parseFloat(recorteImgEl.style.top);
+  const iw=parseFloat(recorteImgEl.style.width),ih=parseFloat(recorteImgEl.style.height);
+  const sx=(ox-il)/iw*recorteImgEl.naturalWidth;
+  const sy=(oy-it)/ih*recorteImgEl.naturalHeight;
+  const sw=DIAM/iw*recorteImgEl.naturalWidth;
+  const sh=DIAM/ih*recorteImgEl.naturalHeight;
+  ctx.drawImage(recorteImgEl,sx,sy,sw,sh,0,0,200,200);
+  fotoFinal=canvas.toDataURL('image/jpeg',0.75);
+  document.getElementById('foto-preview').innerHTML=`<img src="${fotoFinal}"/>`;
+  document.getElementById('foto-btn-texto').textContent='Foto adicionada ✓';
+  fecharRecorte();toast('Foto recortada! ✓');
+}
+
+// Drag recorte
+const rcont=document.getElementById('recorte-container');
+function sd(x,y){recorteDragging=true;recorteStartX=x;recorteStartY=y;recorteOrigX=recortePosX;recorteOrigY=recortePosY;}
+function md(x,y){if(!recorteDragging)return;recortePosX=recorteOrigX+(x-recorteStartX);recortePosY=recorteOrigY+(y-recorteStartY);aplicarTransform();}
+function ed(){recorteDragging=false;}
+rcont.addEventListener('mousedown',e=>sd(e.clientX,e.clientY));
+rcont.addEventListener('mousemove',e=>md(e.clientX,e.clientY));
+rcont.addEventListener('mouseup',ed);
+rcont.addEventListener('touchstart',e=>{e.preventDefault();sd(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
+rcont.addEventListener('touchmove',e=>{e.preventDefault();md(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
+rcont.addEventListener('touchend',ed);
+
+// ── PWA ──
+(function(){
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="80" fill="#c2410c"/><rect x="60" y="220" width="392" height="140" rx="50" fill="#fcd34d"/><rect x="110" y="150" width="260" height="100" rx="40" fill="#fef3c7"/><circle cx="140" cy="370" r="52" fill="#1a0a00"/><circle cx="140" cy="370" r="26" fill="#f59e0b"/><circle cx="372" cy="370" r="52" fill="#1a0a00"/><circle cx="372" cy="370" r="26" fill="#f59e0b"/></svg>`;
+  const iu='data:image/svg+xml,'+encodeURIComponent(svg);
+  document.getElementById('apple-icon').href=iu;
+  const m={name:'Corrida Já',short_name:'Corrida Já',start_url:'./',display:'standalone',background_color:'#1a0a00',theme_color:'#c2410c',lang:'pt-BR',icons:[{src:iu,sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+  document.getElementById('manifest-link').href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/json'}));
+  const sw=`const C='cj-v2';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./'])));self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))));self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).then(r=>{const cl=r.clone();caches.open(C).then(c=>{if(e.request.method==='GET')c.put(e.request,cl);});return r;}).catch(()=>caches.match(e.request)));});`;
+  if('serviceWorker'in navigator) navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'})),{scope:'./'}).catch(()=>{});
+})();
+
+// ── INIT ──
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    const s=localStorage.getItem('cj_passageiro');
+    if(s){usuario=JSON.parse(s);irPara('home');}
+    else mostrarTela('tela-login');
+  },2000);
+});
+
+// ── NAVEGAÇÃO ──
+function mostrarTela(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('ativo'));document.getElementById(id).classList.add('ativo');}
+function irPara(dest){
+  switch(dest){
+    case 'home': mostrarTela('tela-home');iniciarMapaHome();atualizarHome();carregarHistoricoHome();break;
+    case 'historico': mostrarTela('tela-historico');carregarHistorico();break;
+    case 'perfil': mostrarTela('tela-perfil');atualizarPerfil();break;
+  }
+}
+
+// ── LOGIN ──
+function alternarModo(modo){
+  ['cadastro','entrar','rapido'].forEach(m=>{document.getElementById('form-'+m).style.display='none';document.getElementById('tab-'+m).classList.remove('ativo');});
+  document.getElementById('form-'+modo).style.display='block';
+  document.getElementById('tab-'+modo).classList.add('ativo');
+}
+async function cadastrar(){
+  const nome=document.getElementById('cad-nome').value.trim();
+  const fone=document.getElementById('cad-fone').value.trim();
+  if(!nome){toast('Informe seu nome');return;}
+  if(!fone){toast('Informe seu WhatsApp');return;}
+  mostrarLoading(true);
+  try{
+    const id='pas_'+Date.now();
+    const dados={id,nome,fone,foto:fotoFinal||null,tipo:'cadastrado',totalCorridas:0,criadoEm:new Date().toISOString()};
+    await db.collection('cj_passageiros').doc(id).set(dados);
+    usuario=dados;
+    localStorage.setItem('cj_passageiro',JSON.stringify(usuario));
+    mostrarLoading(false);irPara('home');
+  }catch(e){mostrarLoading(false);toast('Erro: '+e.message);}
+}
+async function entrar(){
+  const fone=document.getElementById('login-fone').value.trim();
+  if(!fone){toast('Informe seu WhatsApp');return;}
+  mostrarLoading(true);
+  try{
+    const snap=await db.collection('cj_passageiros').where('fone','==',fone).limit(1).get();
+    if(snap.empty){toast('Número não encontrado.');mostrarLoading(false);return;}
+    usuario={id:snap.docs[0].id,...snap.docs[0].data()};
+    localStorage.setItem('cj_passageiro',JSON.stringify(usuario));
+    mostrarLoading(false);irPara('home');
+  }catch(e){mostrarLoading(false);toast('Erro ao entrar.');}
+}
+function entrarRapido(){
+  const nome=document.getElementById('rapido-nome').value.trim()||'Passageiro';
+  usuario={id:'anon_'+Date.now(),nome,tipo:'anonimo',foto:null};
+  irPara('home');
+}
+function sair(){localStorage.removeItem('cj_passageiro');usuario=null;mostrarTela('tela-login');}
+
+// ── MAPA HOME ──
+function iniciarMapaHome(){
+  if(mapaHome) return;
+  mapaHome=L.map('mapa-home',{zoomControl:false,attributionControl:false});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(mapaHome);
+  mapaHome.setView([-22.9,-46.95],13);
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      posicaoAtual=[pos.coords.latitude,pos.coords.longitude];
+      mapaHome.setView(posicaoAtual,15);
+      L.circleMarker(posicaoAtual,{radius:8,fillColor:'#e8611a',color:'#fff',weight:2,fillOpacity:1}).addTo(mapaHome);
+      document.getElementById('campo-origem').value='Minha localização atual';
+    });
+  }
+}
+function usarGPS(){
+  if(!navigator.geolocation){toast('GPS não disponível');return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    posicaoAtual=[pos.coords.latitude,pos.coords.longitude];
+    document.getElementById('campo-origem').value='Minha localização atual';
+    if(mapaHome) mapaHome.setView(posicaoAtual,15);
+    toast('📍 Localização obtida!');
+    calcularEstimativa();
+  },()=>toast('Não foi possível obter localização'));
+}
+
+// ── PEDIR CORRIDA ──
+async function pedirCorrida(){
+  const destino=document.getElementById('campo-destino').value.trim();
+  const obs=document.getElementById('campo-obs').value.trim();
+  if(!destino){toast('Informe o destino');return;}
+  if(!posicaoAtual){toast('Ative sua localização primeiro');usarGPS();return;}
+
+  const precoEl=document.getElementById('est-valor').textContent;
+  const valorEst=precoEl!=='—'?precoEl:'A combinar';
+
+  mostrarLoading(true);
+  const id='cor_'+Date.now();
+  const corrida={id,clienteId:usuario.id,clienteNome:usuario.nome,clienteFoto:usuario.foto||null,
+    origem:document.getElementById('campo-origem').value||'Localização atual',destino,obs:obs||null,
+    origemLat:posicaoAtual[0],origemLng:posicaoAtual[1],
+    valorEstimado:valorEst,status:'aguardando',
+    criadoEm:firebase.firestore.FieldValue.serverTimestamp(),motorista:null,valor:null};
+  try{
+    await db.collection('cj_corridas').doc(id).set(corrida);
+    corridaAtiva=corrida;
+    document.getElementById('resumo-origem').textContent=corrida.origem;
+    document.getElementById('resumo-destino').textContent=corrida.destino;
+    document.getElementById('resumo-valor').textContent=valorEst;
+    if(obs){
+      document.getElementById('resumo-obs').textContent=obs;
+      document.getElementById('resumo-obs-row').style.display='flex';
+    }else{
+      document.getElementById('resumo-obs-row').style.display='none';
+    }
+    mostrarLoading(false);
+    mostrarTela('tela-buscando');
+    iniciarContador();
+    escutarCorrida(id);
+  }catch(e){mostrarLoading(false);toast('Erro ao pedir corrida.');}
+}
+
+function escutarCorrida(id){
+  if(unsubCorrida) unsubCorrida();
+  unsubCorrida=db.collection('cj_corridas').doc(id).onSnapshot(snap=>{
+    const d=snap.data();if(!d) return;
+    corridaAtiva=d;
+    if(d.status==='aceita'||d.status==='a_caminho'){
+      pararContador();
+      tocarSom();
+      mostrarTela('tela-corrida');
+      iniciarMapaCorrida(d);
+    }
+    if(d.status==='concluida'){
+      if(unsubCorrida) unsubCorrida();
+      pararContador();
+      document.getElementById('aval-valor-corrida').textContent='R$ '+parseFloat(d.valor||0).toFixed(2).replace('.',',');
+      document.getElementById('aval-destino').textContent=d.destino||'—';
+      document.getElementById('aval-motorista').textContent=d.motorista?d.motorista.nome:'—';
+      tocarSom();
+      mostrarTela('tela-avaliacao');
+    }
+    if(d.status==='cancelada_motorista'){
+      if(unsubCorrida) unsubCorrida();
+      pararContador();
+      toast('Corrida cancelada pelo motorista.');
+      irPara('home');
+    }
+  });
+}
+
+async function cancelarCorrida(){
+  if(!corridaAtiva){irPara('home');return;}
+  mostrarLoading(true);
+  try{
+    await db.collection('cj_corridas').doc(corridaAtiva.id).update({status:'cancelada_cliente'});
+    if(unsubCorrida) unsubCorrida();
+    pararContador();
+    corridaAtiva=null;
+    mostrarLoading(false);irPara('home');toast('Corrida cancelada');
+  }catch(e){mostrarLoading(false);irPara('home');}
+}
+
+// ── MAPA CORRIDA ──
+function iniciarMapaCorrida(d){
+  if(!mapaCorrida){
+    mapaCorrida=L.map('mapa-corrida',{zoomControl:false,attributionControl:false});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(mapaCorrida);
+  }
+  if(d.motorista){
+    document.getElementById('corrida-motorista-nome').textContent=d.motorista.nome||'—';
+    document.getElementById('corrida-motorista-placa').textContent=d.motorista.placa||'—';
+    document.getElementById('corrida-motorista-aval').textContent='⭐ '+(d.motorista.avaliacao||'5.0');
+    document.getElementById('corrida-eta').textContent=d.eta||'—';
+    document.getElementById('corrida-dist').textContent=d.distancia||'—';
+    document.getElementById('corrida-valor').textContent=d.valor?'R$ '+parseFloat(d.valor).toFixed(2).replace('.',','):d.valorEstimado||'—';
+    const fone=(d.motorista.fone||'').replace(/\D/g,'');
+    document.getElementById('btn-whatsapp-motorista').onclick=()=>window.open('https://wa.me/55'+fone,'_blank');
+    if(d.motorista.foto) document.getElementById('corrida-motorista-foto').innerHTML=`<img src="${d.motorista.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;
+    if(d.motorista.lat&&d.motorista.lng){
+      const pos=[d.motorista.lat,d.motorista.lng];
+      if(marcadorMotorista) marcadorMotorista.setLatLng(pos);
+      else{
+        const ic=L.divIcon({html:'<div style="background:#e8611a;width:36px;height:36px;border-radius:50%;border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,0.3);">🏍️</div>',className:'',iconSize:[36,36],iconAnchor:[18,18]});
+        marcadorMotorista=L.marker(pos,{icon:ic}).addTo(mapaCorrida);
+      }
+      mapaCorrida.setView(pos,15);
+    }
+  }
+}
+
+// ── AVALIAÇÃO ──
+function avaliar(n){avaliacao=n;document.querySelectorAll('.estrela').forEach((e,i)=>e.classList.toggle('ativa',i<n));}
+async function finalizarAvaliacao(){
+  if(!corridaAtiva){irPara('home');return;}
+  mostrarLoading(true);
+  try{
+    await db.collection('cj_corridas').doc(corridaAtiva.id).update({avaliacaoPassageiro:avaliacao});
+    corridaAtiva=null;mostrarLoading(false);toast('Obrigado! ⭐');irPara('home');
+  }catch(e){mostrarLoading(false);irPara('home');}
+}
+
+// ── HISTÓRICO ──
+async function carregarHistoricoHome(){
+  if(!usuario) return;
+  try{
+    const snap=await db.collection('cj_corridas').where('clienteId','==',usuario.id).where('status','==','concluida').orderBy('criadoEm','desc').limit(3).get();
+    const el=document.getElementById('lista-historico-home');
+    if(snap.empty){el.innerHTML='<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">Nenhuma corrida ainda</div>';return;}
+    el.innerHTML=snap.docs.map(d=>{const c=d.data();return`<div class="historico-item"><div class="historico-icon">🏍️</div><div class="historico-info"><div class="historico-local">${c.destino}</div><div class="historico-data">${formatarData(c.criadoEm)}</div></div><div class="historico-valor">R$ ${parseFloat(c.valor||0).toFixed(2).replace('.',',')}</div></div>`;}).join('');
+  }catch(e){}
+}
+async function carregarHistorico(){
+  if(!usuario) return;
+  const el=document.getElementById('lista-historico');
+  el.innerHTML='<div style="padding:20px;text-align:center;color:var(--muted);">Carregando...</div>';
+  try{
+    const snap=await db.collection('cj_corridas').where('clienteId','==',usuario.id).orderBy('criadoEm','desc').limit(20).get();
+    if(snap.empty){el.innerHTML='<div style="padding:40px;text-align:center;color:var(--muted);font-size:14px;">Nenhuma corrida ainda</div>';return;}
+    el.innerHTML=snap.docs.map(d=>{
+      const c=d.data();
+      const sc=c.status==='concluida'?'status-concluida':'status-cancelada';
+      const sl=c.status==='concluida'?'CONCLUÍDA':'CANCELADA';
+      return`<div class="historico-card"><div class="historico-card-top"><div class="historico-card-status ${sc}">${sl}</div><div class="historico-card-data">${formatarData(c.criadoEm)}</div></div><div class="historico-card-rota"><div class="historico-rota-item"><span>🟡</span>${c.origem}</div><div class="historico-rota-item"><span>🔴</span>${c.destino}</div>${c.obs?`<div class="historico-rota-item"><span>📝</span>${c.obs}</div>`:''}</div><div class="historico-card-bottom"><div class="historico-card-motorista">🏍️ ${c.motorista?c.motorista.nome:'Sem motorista'}</div><div class="historico-card-valor">R$ ${parseFloat(c.valor||0).toFixed(2).replace('.',',')}</div></div></div>`;
+    }).join('');
+  }catch(e){el.innerHTML='<div style="padding:40px;text-align:center;color:var(--muted);">Erro ao carregar</div>';}
+}
+
+// ── HOME / PERFIL ──
+function atualizarHome(){
+  if(!usuario) return;
+  const h=new Date().getHours();
+  document.getElementById('saudacao').textContent=h<12?'Bom dia!':h<18?'Boa tarde!':'Boa noite!';
+  document.getElementById('home-nome').textContent=usuario.nome||'Passageiro';
+  const av=document.getElementById('home-avatar');
+  if(usuario.foto) av.innerHTML=`<img src="${usuario.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;
+  else av.innerHTML=`<div class="avatar-initials">${(usuario.nome||'P')[0].toUpperCase()}</div>`;
+}
+function atualizarPerfil(){
+  if(!usuario) return;
+  document.getElementById('perfil-nome').textContent=usuario.nome||'Passageiro';
+  document.getElementById('perfil-fone').textContent=usuario.fone||'Sem cadastro';
+  const el=document.getElementById('perfil-avatar');
+  if(usuario.foto) el.innerHTML=`<img src="${usuario.foto}"/>`;
+  else el.textContent=(usuario.nome||'P')[0].toUpperCase();
+}
+
+// ── UTILS ──
+function formatarData(ts){if(!ts) return'—';const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3500);}
+function mostrarLoading(s){document.getElementById('loading').classList.toggle('show',s);}
+</script>
+</body>
+</html>
