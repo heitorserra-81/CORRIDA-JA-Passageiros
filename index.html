@@ -68,13 +68,20 @@ input[type=file]{display:none;}
 
 /* HOME */
 #tela-home{background:var(--bg);padding-bottom:80px;}
-.home-header{padding:16px 20px;padding-top:max(16px,calc(var(--sat) + 8px));background:linear-gradient(180deg,#c2410c,transparent);}
-.home-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.home-saudacao{font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:2px;}
-.home-nome{font-size:20px;font-weight:800;color:#fff;}
+.home-header{padding:14px 20px 10px;padding-top:max(14px,calc(var(--sat) + 8px));background:linear-gradient(180deg,#c2410c 0%,rgba(194,65,12,0.6) 70%,transparent 100%);}
+.home-header-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.header-saudacao{flex:1;}
+.home-saudacao{font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:1px;}
+.home-nome{font-size:18px;font-weight:800;color:#fff;}
 .avatar{width:44px;height:44px;border-radius:50%;background:var(--card2);border:2px solid var(--laranja);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;}
 .avatar img{width:100%;height:100%;object-fit:cover;}
 .avatar-initials{font-size:16px;font-weight:700;color:var(--laranja);}
+.home-header-top{display:flex;align-items:center;gap:12px;}
+.header-saudacao{flex:1;}
+.btn-hamburger{background:none;border:none;color:#fff;font-size:24px;cursor:pointer;padding:4px 8px;flex-shrink:0;}
+.menu-item{padding:14px 0;font-size:15px;font-weight:600;color:var(--text);cursor:pointer;border-bottom:1px solid rgba(234,88,12,0.08);-webkit-tap-highlight-color:transparent;}
+.menu-item:last-child{border-bottom:none;}
+.menu-sep{height:1px;background:var(--border);margin:8px 0;}
 
 /* CARD DESTINO */
 .destino-card{margin:0 16px 14px;background:var(--card);border:1px solid var(--border);border-radius:22px;padding:18px;}
@@ -135,14 +142,34 @@ input[type=file]{display:none;}
 .hist-recente-local{font-size:13px;font-weight:600;color:var(--text);}
 .hist-recente-end{font-size:11px;color:var(--muted);}
 
-.btn-chamar{width:100%;padding:17px;border-radius:18px;background:linear-gradient(135deg,var(--laranja-escuro),var(--laranja));border:none;color:#fff;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 8px 24px rgba(234,88,12,0.4);}
+.btn-chamar-wrap{position:relative;border-radius:20px;padding:2px;background:linear-gradient(90deg,#ef4444,#3b82f6,#fbbf24,#ef4444);background-size:300% 100%;animation:luzBotao 2s linear infinite;}
+.btn-chamar-wrap:has(.btn-chamar:disabled){animation:none;background:rgba(255,255,255,0.1);}
+@keyframes luzBotao{0%{background-position:0% 50%;}100%{background-position:300% 50%;}}
+.btn-chamar{width:100%;padding:17px;border-radius:18px;background:linear-gradient(135deg,var(--laranja-escuro),var(--laranja));border:none;color:#fff;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;position:relative;z-index:1;}
 .btn-chamar:active{opacity:0.85;}
-.btn-chamar:disabled{opacity:0.35;}
+.btn-chamar:disabled{opacity:0.35;background:#333;}
+
+/* ATALHOS COM LUZ GIRANDO */
+.atalhos{display:flex;gap:10px;margin-bottom:12px;}
+.atalho-wrap{flex:1;position:relative;border-radius:16px;padding:2px;}
+.atalho-wrap::before{content:"";position:absolute;inset:-1px;border-radius:16px;background:linear-gradient(var(--ang,0deg),#ef4444,#3b82f6,#fbbf24);animation:girarLuz 3s linear infinite;}
+@keyframes girarLuz{
+  0%{background:linear-gradient(0deg,#ef4444,#3b82f6,#fbbf24);}
+  33%{background:linear-gradient(120deg,#3b82f6,#fbbf24,#ef4444);}
+  66%{background:linear-gradient(240deg,#fbbf24,#ef4444,#3b82f6);}
+  100%{background:linear-gradient(360deg,#ef4444,#3b82f6,#fbbf24);}
+}
+.atalho-btn{width:100%;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;background:var(--card2);border:none;border-radius:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;z-index:1;font-family:inherit;}
+.atalho-btn:active{opacity:0.8;}
+.atalho-icon{font-size:22px;}
+.atalho-label{font-size:11px;font-weight:600;color:var(--muted);}
+.atalho-end{font-size:10px;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
 
 /* MAPA HOME */
 .mapa-home-wrap{margin:0 16px 14px;border-radius:20px;overflow:hidden;border:1px solid var(--border);height:180px;position:relative;}
 #mapa-home{height:100%;width:100%;}
 .btn-mapa-full{position:absolute;top:10px;right:10px;z-index:999;background:rgba(26,10,0,0.85);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:600;color:#fff;cursor:pointer;}
+.mapa-label-home{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:999;background:rgba(26,10,0,0.85);border:1px solid var(--border);border-radius:10px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--laranja);white-space:nowrap;}
 
 /* MODAL MAPA ESCOLHER */
 #modal-mapa-destino{display:none;position:fixed;inset:0;z-index:9980;flex-direction:column;}
@@ -218,7 +245,7 @@ input[type=file]{display:none;}
 #modal-mapa-full{display:none;position:fixed;inset:0;z-index:9990;background:#000;flex-direction:column;}
 #modal-mapa-full.show{display:flex;}
 #mapa-full{flex:1;}
-.btn-fechar-mapa{position:fixed;top:max(16px,calc(var(--sat)+8px));right:16px;z-index:9991;background:rgba(26,10,0,0.95);border:2px solid var(--laranja);border-radius:14px;padding:12px 20px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;}
+.btn-fechar-mapa{position:fixed;top:max(20px,calc(var(--sat)+16px));left:16px;z-index:9991;background:rgba(26,10,0,0.97);border:2px solid var(--laranja);border-radius:14px;padding:14px 22px;font-size:15px;font-weight:800;color:#fff;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.6);}
 
 /* CROP */
 .crop-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:20000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;}
@@ -313,8 +340,29 @@ input[type=file]{display:none;}
 <div class="screen" id="tela-home">
   <div class="home-header">
     <div class="home-header-top">
-      <div><div class="home-saudacao" id="saudacao">Bom dia!</div><div class="home-nome" id="home-nome">Olá!</div></div>
       <div class="avatar" id="home-avatar" onclick="irPara('perfil')"><div class="avatar-initials" id="home-initial">👤</div></div>
+      <div class="header-saudacao">
+        <div class="home-saudacao" id="saudacao">Bom dia!</div>
+        <div class="home-nome" id="home-nome">Olá!</div>
+      </div>
+      <button class="btn-hamburger" onclick="abrirMenu()">☰</button>
+    </div>
+  </div>
+
+  <!-- MENU HAMBURGUER -->
+  <div id="menu-overlay" onclick="fecharMenu()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:8000;"></div>
+  <div id="menu-lateral" style="display:none;position:fixed;top:0;right:0;bottom:0;width:280px;background:var(--card);border-left:1px solid var(--border);z-index:8001;padding-top:max(60px,calc(var(--sat)+44px));overflow-y:auto;">
+    <div style="padding:0 20px 20px;">
+      <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:20px;">Menu</div>
+      <div class="menu-item" onclick="definirAtalho('casa')">🏠 Definir minha Casa</div>
+      <div class="menu-item" onclick="definirAtalho('trabalho')">💼 Definir meu Trabalho</div>
+      <div class="menu-sep"></div>
+      <div class="menu-item" onclick="toggleNotif()"><span id="notif-icon">🔔</span> <span id="notif-label">Notificações ativadas</span></div>
+      <div class="menu-sep"></div>
+      <div class="menu-item" onclick="irPara('perfil');fecharMenu()">👤 Meu perfil</div>
+      <div class="menu-item" onclick="verHistoricoMenu()">🕐 Histórico de corridas</div>
+      <div class="menu-sep"></div>
+      <div class="menu-item" style="color:#ef4444;" onclick="sair()">🚪 Sair da conta</div>
     </div>
   </div>
 
@@ -334,20 +382,26 @@ input[type=file]{display:none;}
 
     <!-- ATALHOS -->
     <div class="atalhos">
-      <div class="atalho-btn" onclick="usarAtalho('casa')">
-        <div class="atalho-icon">🏠</div>
-        <div class="atalho-label">Casa</div>
-        <div class="atalho-end" id="atalho-casa-end">Definir</div>
+      <div class="atalho-wrap">
+        <div class="atalho-btn" onclick="usarAtalho('casa')">
+          <div class="atalho-icon">🏠</div>
+          <div class="atalho-label">Casa</div>
+          <div class="atalho-end" id="atalho-casa-end">Definir</div>
+        </div>
       </div>
-      <div class="atalho-btn" onclick="usarAtalho('trabalho')">
-        <div class="atalho-icon">💼</div>
-        <div class="atalho-label">Trabalho</div>
-        <div class="atalho-end" id="atalho-trab-end">Definir</div>
+      <div class="atalho-wrap">
+        <div class="atalho-btn" onclick="usarAtalho('trabalho')">
+          <div class="atalho-icon">💼</div>
+          <div class="atalho-label">Trabalho</div>
+          <div class="atalho-end" id="atalho-trab-end">Definir</div>
+        </div>
       </div>
-      <div class="atalho-btn" onclick="abrirMapaDestino()">
-        <div class="atalho-icon">🗺️</div>
-        <div class="atalho-label">No mapa</div>
-        <div class="atalho-end">Tocar</div>
+      <div class="atalho-wrap">
+        <div class="atalho-btn" onclick="abrirMapaDestino()">
+          <div class="atalho-icon">🗺️</div>
+          <div class="atalho-label">No mapa</div>
+          <div class="atalho-end">Tocar</div>
+        </div>
       </div>
     </div>
 
@@ -389,12 +443,14 @@ input[type=file]{display:none;}
       <div id="hist-recente-lista"></div>
     </div>
 
-    <button class="btn-chamar" id="btn-chamar" onclick="chamarCorrida()" disabled>Chamar Corrida Já!</button>
+    <div class="btn-chamar-wrap" id="btn-chamar-wrap">
+      <button class="btn-chamar" id="btn-chamar" onclick="chamarCorrida()" disabled>🚗 Chamar Corrida Já!</button>
+    </div>
   </div>
 
-  <div class="mapa-home-wrap">
-    <button class="btn-mapa-full" onclick="abrirMapaFull()">⛶ Ampliar</button>
-    <div id="mapa-home"></div>
+  <div class="mapa-home-wrap" onclick="abrirMapaFull()" style="cursor:pointer;">
+    <div class="mapa-label-home">Toque para ampliar ⛶</div>
+    <div id="mapa-home" style="pointer-events:none;"></div>
   </div>
 
   <div class="bottom-nav">
@@ -573,7 +629,15 @@ let _audioCtx=null;
 function getACtx(){if(!_audioCtx)_audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(_audioCtx.state==="suspended")_audioCtx.resume();return _audioCtx;}
 function nota(f,s,d,v=0.7,t="sine"){try{const c=getACtx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=t;o.frequency.setValueAtTime(f,c.currentTime+s);g.gain.setValueAtTime(0,c.currentTime+s);g.gain.linearRampToValueAtTime(v,c.currentTime+s+0.01);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+s+d);o.start(c.currentTime+s);o.stop(c.currentTime+s+d+0.05);}catch(e){}}
 function falar(texto){try{if(!("speechSynthesis"in window))return;window.speechSynthesis.cancel();const faz=()=>{const u=new SpeechSynthesisUtterance(texto);u.lang="pt-BR";u.rate=1.0;u.pitch=1.1;u.volume=1;const v=window.speechSynthesis.getVoices().find(x=>x.lang.startsWith("pt"));if(v)u.voice=v;window.speechSynthesis.speak(u);};if(window.speechSynthesis.getVoices().length>0)faz();else{window.speechSynthesis.onvoiceschanged=()=>{faz();window.speechSynthesis.onvoiceschanged=null;};}}catch(e){}}
-function somAceito(){nota(523,0,0.15,0.7);nota(659,0.18,0.15,0.7);nota(784,0.36,0.3,0.65);setTimeout(()=>falar("Corrida Já! Seu motorista está a caminho!"),600);}
+function somAceito(){
+  // Som positivo e marcante
+  nota(784,0,0.1,0.8,"sine");
+  nota(1047,0.12,0.1,0.8,"sine");
+  nota(1318,0.24,0.08,0.8,"sine");
+  nota(1047,0.34,0.08,0.7,"sine");
+  nota(1318,0.44,0.4,0.75,"sine");
+  setTimeout(()=>falar("Corrida Já! Corrida aceita! Seu motorista está a caminho!"),500);
+}
 function somChegou(){nota(784,0,0.15,0.7);nota(1047,0.18,0.15,0.7);nota(1318,0.36,0.4,0.65);setTimeout(()=>falar("Corrida Já! Seu motorista chegou! Dirija-se ao veículo."),600);}
 if("speechSynthesis"in window){window.speechSynthesis.getVoices();window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();}
 
@@ -769,6 +833,7 @@ function carregarAtalhos(){
   if(casa)document.getElementById("atalho-casa-end").textContent=casa.nome.split(",")[0];
   if(trab)document.getElementById("atalho-trab-end").textContent=trab.nome.split(",")[0];
 }
+
 function usarAtalho(tipo){
   const salvo=JSON.parse(localStorage.getItem("cj_atalho_"+tipo)||"null");
   if(salvo){
@@ -778,9 +843,43 @@ function usarAtalho(tipo){
     calcularValorEstimado();
     toast("Destino: "+salvo.nome.split(",")[0]);
   } else {
-    toast("Toque longo no destino para salvar como "+( tipo==="casa"?"Casa":"Trabalho"));
+    // Se nao tem atalho definido, abre mapa pra definir
+    definirAtalho(tipo);
   }
 }
+
+function definirAtalho(tipo){
+  fecharMenu();
+  // Salva o tipo pendente e abre o mapa
+  window._atalhoDefinindo=tipo;
+  toast("Escolha no mapa onde é sua "+(tipo==="casa"?"casa":"trabalho"));
+  abrirMapaDestino();
+  // Override do confirmar pra salvar como atalho
+  window._definindoAtalho=true;
+}
+
+// Menu hamburguer
+function abrirMenu(){
+  document.getElementById("menu-overlay").style.display="block";
+  document.getElementById("menu-lateral").style.display="block";
+  // Atualizar estado notificacao
+  const notifOn=localStorage.getItem("cj_notif_on")!=="false";
+  document.getElementById("notif-icon").textContent=notifOn?"🔔":"🔕";
+  document.getElementById("notif-label").textContent=notifOn?"Notificações ativadas":"Notificações desativadas";
+}
+function fecharMenu(){
+  document.getElementById("menu-overlay").style.display="none";
+  document.getElementById("menu-lateral").style.display="none";
+}
+function toggleNotif(){
+  const atual=localStorage.getItem("cj_notif_on")!=="false";
+  localStorage.setItem("cj_notif_on",atual?"false":"true");
+  if(!atual)pedirPermissaoNotificacao();
+  document.getElementById("notif-icon").textContent=!atual?"🔔":"🔕";
+  document.getElementById("notif-label").textContent=!atual?"Notificações ativadas":"Notificações desativadas";
+  toast(!atual?"Notificações ativadas!":"Notificações desativadas");
+}
+function verHistoricoMenu(){fecharMenu();irPara("perfil");}
 
 // ── HISTORICO RECENTE ──
 function salvarHistRecente(dest){
@@ -846,7 +945,17 @@ async function _buscarEnderecoReverso(lat,lng){
 }
 function confirmarDestinoPeloMapa(){
   if(!_mapaDestinoCoords||!_mapaDestinoEnd)return;
-  destinoSelecionado={nome:_mapaDestinoEnd,lat:_mapaDestinoCoords[0],lng:_mapaDestinoCoords[1]};
+  const dest={nome:_mapaDestinoEnd,lat:_mapaDestinoCoords[0],lng:_mapaDestinoCoords[1]};
+  // Se estava definindo atalho casa/trabalho
+  if(window._definindoAtalho&&window._atalhoDefinindo){
+    localStorage.setItem("cj_atalho_"+window._atalhoDefinindo,JSON.stringify(dest));
+    const nomeEl=document.getElementById("atalho-"+window._atalhoDefinindo+"-end");
+    if(nomeEl)nomeEl.textContent=dest.nome.split(",")[0];
+    toast((window._atalhoDefinindo==="casa"?"Casa":"Trabalho")+" definido: "+dest.nome.split(",")[0]);
+    window._definindoAtalho=false;window._atalhoDefinindo=null;
+    fecharMapaDestino();return;
+  }
+  destinoSelecionado=dest;
   document.getElementById("campo-busca").value=_mapaDestinoEnd.split(",").slice(0,2).join(",").trim();
   document.getElementById("btn-chamar").disabled=false;
   fecharMapaDestino();
@@ -1016,8 +1125,11 @@ function atualizarHome(){
   document.getElementById("saudacao").textContent=h<12?"Bom dia!":h<18?"Boa tarde!":"Boa noite!";
   document.getElementById("home-nome").textContent=passageiro.nome||"Passageiro";
   const av=document.getElementById("home-avatar");
-  if(passageiro.foto)av.innerHTML=`<img src="${passageiro.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;
-  else{const ini=document.getElementById("home-initial");if(ini)ini.textContent=(passageiro.nome||"P")[0].toUpperCase();}
+  if(passageiro.foto){
+    av.innerHTML=`<img src="${passageiro.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;
+  } else {
+    av.innerHTML=`<div class="avatar-initials">${(passageiro.nome||"P")[0].toUpperCase()}</div>`;
+  }
 }
 function atualizarPerfil(){
   if(!passageiro)return;
