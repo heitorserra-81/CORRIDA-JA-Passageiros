@@ -91,9 +91,9 @@ input[type=file]{display:none;}
 .atalhos-wrap{padding:8px 14px 4px;}
 .atalhos-scroll{display:flex;gap:8px;overflow-x:scroll;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding:0 2px 6px;scrollbar-width:none;cursor:grab;}
 .atalhos-scroll::-webkit-scrollbar{display:none;}
-.atalho-item{flex-shrink:0;width:90px;position:relative;border-radius:14px;padding:2px;overflow:hidden;touch-action:none;cursor:pointer;}
-.atalho-item{transition:transform 0.15s ease,box-shadow 0.15s ease;}
-.atalho-item.drag-ativo{transform:scale(1.15) translateY(-8px) rotate(2deg)!important;z-index:100;box-shadow:0 18px 40px rgba(251,191,36,0.6),0 8px 16px rgba(0,0,0,0.4);filter:brightness(1.25);transition:none!important;}
+.atalho-item{flex-shrink:0;width:90px;position:relative;border-radius:14px;padding:2px;overflow:hidden;cursor:pointer;transition:transform 0.18s ease,box-shadow 0.18s ease,filter 0.18s ease;}
+.atalho-item.drag-ativo{overflow:hidden;transform:scale(1.18) translateY(-10px) rotate(2deg)!important;z-index:1000;box-shadow:0 22px 48px rgba(251,191,36,0.7),0 12px 22px rgba(0,0,0,0.6)!important;filter:brightness(1.15);transition:none!important;touch-action:none;}
+.atalhos-scroll.reordenando{overflow:visible;touch-action:none;}
 .atalho-luz{position:absolute;top:50%;left:50%;width:200%;height:200%;animation:gira 2s linear infinite;border-radius:14px;}
 .atalho-conteudo{position:relative;z-index:2;background:var(--card2);border-radius:12px;padding:11px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;}
 .atalho-ic{font-size:22px;}
@@ -129,76 +129,37 @@ input[type=file]{display:none;}
 .valor-info{font-size:11px;color:var(--muted);}
 
 /* BOTÃO CHAMAR */
-.btn-chamar-wrap{position:relative;border-radius:20px;padding:2px;overflow:hidden;}
-.btn-chamar-wrap::before{content:"";position:absolute;top:50%;left:50%;width:200%;height:200%;background:conic-gradient(#ef4444,#f97316,#fbbf24,#22c55e,#3b82f6,#ef4444);animation:giraBorda 3s linear infinite;transform:translate(-50%,-50%) rotate(0deg);}
-@keyframes giraBorda{from{transform:translate(-50%,-50%) rotate(0deg);}to{transform:translate(-50%,-50%) rotate(360deg);}}
-.btn-chamar-wrap::after{content:"";position:absolute;inset:2px;border-radius:18px;background:#0f1a2e;z-index:1;}
-.btn-chamar-luz-ring{display:none;}
-.btn-chamar-luz{display:none;}
-.btn-chamar{width:100%;padding:17px 20px;border-radius:18px;background:transparent;border:none;color:#fbbf24;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;position:relative;z-index:2;letter-spacing:0.4px;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px;}
-.btn-chamar::before{content:"";position:absolute;top:-50%;left:-80%;width:40%;height:200%;background:linear-gradient(105deg,transparent,rgba(255,255,255,0.15),transparent);animation:solPassando 3s ease-in-out infinite;z-index:0;}
-@keyframes solPassando{0%{left:-80%;}100%{left:160%;}}
-.btn-chamar span,.btn-chamar img{position:relative;z-index:1;}
-.btn-chamar:disabled{opacity:0.4;}
-.btn-chamar:disabled::before{display:none;}
-
-
-
+@property --bordaAng{syntax:"<angle>";initial-value:0deg;inherits:false;}
+@keyframes giraBorda{to{--bordaAng:360deg;}}
 .btn-chamar-wrap{
-  position:relative;
-  border-radius:20px;
-  padding:2px;
-  overflow:hidden;
-  /* Borda conic girando - igual Mesa Certa */
-  background:conic-gradient(from var(--btn-angle,0deg),#ef4444,#f97316,#fbbf24,#22c55e,#3b82f6,#ef4444);
-  animation:btn-borda-spin 3s linear infinite;
+  position:relative;border-radius:20px;padding:3px;
+  background:conic-gradient(from var(--bordaAng),#ef4444,#f97316,#fbbf24,#22c55e,#3b82f6,#a855f7,#ef4444);
+  animation:giraBorda 3s linear infinite;
 }
-.btn-chamar-luz-ring{display:none;}
-.btn-chamar-luz{display:none;}
 .btn-chamar{
-  width:100%;
-  padding:17px 20px;
-  border-radius:18px;
-  background:#1a2a4a;
+  width:100%;padding:16px 20px;border-radius:17px;
+  background:linear-gradient(135deg,#1e40af,#2563eb,#1d4ed8);
   border:none;
-  color:#fbbf24;
-  font-size:16px;
-  font-weight:900;
-  cursor:pointer;
-  font-family:inherit;
-  position:relative;
-  z-index:2;
-  letter-spacing:0.4px;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
+  color:#ffffff;
+  font-size:18px;font-weight:900;
+  cursor:pointer;font-family:inherit;
+  position:relative;z-index:2;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  letter-spacing:0.5px;
+  text-shadow:0 1px 5px rgba(0,0,0,0.5);
 }
-/* LUZ SOLAR passando da esquerda pra direita - shimmer */
-.btn-chamar::after{
-  content:"";
-  position:absolute;
-  top:-20%;
-  left:-80%;
-  width:50%;
-  height:140%;
-  background:linear-gradient(105deg,transparent 20%,rgba(255,255,255,0.18) 50%,transparent 80%);
-  animation:solPassando 2.2s ease-in-out infinite;
+/* Luz reluzente interna - passa de fora a fora */
+.btn-chamar::before{
+  content:"";position:absolute;
+  top:-60%;left:-60%;width:220%;height:220%;
+  background:linear-gradient(45deg,transparent 42%,rgba(255,255,255,0.4) 50%,transparent 58%);
+  animation:luzReluzente 2.8s linear infinite;
+  pointer-events:none;
 }
-@keyframes solPassando{
-  0%{left:-80%;opacity:0;}
-  10%{opacity:1;}
-  90%{opacity:1;}
-  100%{left:130%;opacity:0;}
-}
-.btn-chamar:disabled{
-  opacity:0.4;
-  background:#1a1a1a;
-  color:#555;
-}
-.btn-chamar:disabled::after{display:none;}
-.btn-chamar:disabled~.btn-chamar-wrap::before{animation:none;}
+@keyframes luzReluzente{0%{transform:translateX(-55%);}100%{transform:translateX(55%);}}
+.btn-chamar img,.btn-chamar span{position:relative;z-index:1;}
+.btn-chamar:disabled{opacity:0.92;cursor:default;}
+
 /* MAPA MOTORISTAS */
 .mapa-mot-wrap{margin:0 14px 12px;border-radius:18px;overflow:hidden;border:1px solid rgba(34,197,94,0.2);height:200px;position:relative;background:#060d18;}
 #mapa-motoristas{position:absolute;top:0;left:0;bottom:0;right:0;width:100%;height:100%;}
@@ -506,7 +467,7 @@ input[type=file]{display:none;}
     </div>
     <div class="btn-chamar-wrap">
       <button class="btn-chamar" id="btn-chamar" onclick="chamarCorrida()" disabled>
-        <img src="https://heitorserra-81.github.io/CORRIDA-JA-Passageiros/IMG_0851.jpeg" style="width:50px;height:50px;border-radius:13px;object-fit:cover;flex-shrink:0;"/>
+        <img src="https://heitorserra-81.github.io/CORRIDA-JA-Passageiros/IMG_0851.jpeg" style="width:52px;height:52px;border-radius:13px;object-fit:cover;flex-shrink:0;box-shadow:0 3px 10px rgba(0,0,0,0.4);"/>
         <span>Chamar Corrida Já!</span>
       </button>
     </div>
@@ -859,7 +820,7 @@ let fotoFinalCad=null,cropImg=null,cropScale=1,cropTX=0,cropTY=0,cropBaseScale=1
 let marcsMot={},marcMot=null;
 let _sugTO=null,_destEnd=null,_destCoords=null;
 let _avalNota=5,_avalId=null;
-let _dragTO=null,_dragging=false,_dragIdx=null,_dragEl=null;
+let _dragTO=null,_dragging=false,_dragIdx=null,_dragEl=null,_acabouDrag=false;
 let _novoIcon="⭐",_novoCor="#fbbf24";
 let _definindoAtalho=false,_tipoAtalho=null;
 
@@ -1047,7 +1008,7 @@ function renderAtalhos(){
 }
 
 function usarAtalho(idx){
-  if(_dragging)return;
+  if(_dragging||_acabouDrag)return;
   const atalhos=getAtalhos().filter(a=>a.ativo!==false);
   const a=atalhos[idx];if(!a)return;
   if(a.tipo==="mapa"){abrirMapaDest();return;}
@@ -1065,32 +1026,40 @@ function usarAtalho(idx){
   }
 }
 
-// ── DRAG & DROP ──
+// ── DRAG & DROP (long-press pra reordenar; deslizar normal faz scroll) ──
+let _dragStartX=0,_dragStartY=0,_dragMoved=false;
 function iniciaDrag(e,idx){
-  e.stopPropagation();
+  // NAO chamar stopPropagation: deixa o scroll nativo rolar normalmente
+  const t=e.touches?e.touches[0]:e;
+  _dragStartX=t.clientX;_dragStartY=t.clientY;_dragMoved=false;
   clearTimeout(_dragTO);
   _dragTO=setTimeout(()=>{
+    // Long-press completado SEM ter rolado: entra no modo reordenar
+    if(_dragMoved)return;
     _dragging=true;_dragIdx=idx;
     _dragEl=document.querySelector(`.atalho-item[data-idx="${idx}"]`);
-    if(_dragEl){
-      _dragEl.classList.add("drag-ativo");
-      // Guardar posição original para animação
-      const r=_dragEl.getBoundingClientRect();
-      _dragEl._origLeft=r.left;
-    }
-    if(navigator.vibrate)navigator.vibrate([60,20,60]);
-  },500);
+    const cont=document.getElementById("atalhos-container");
+    if(cont)cont.classList.add("reordenando");
+    if(_dragEl)_dragEl.classList.add("drag-ativo");
+    if(navigator.vibrate)navigator.vibrate([50,20,50]);
+  },600);
 }
 function moveDrag(e){
-  if(!_dragging||!_dragEl)return;
+  const t=e.touches?e.touches[0]:e;
+  // Antes de ativar o drag: se o dedo mexeu, e' scroll -> cancela o long-press
+  if(!_dragging){
+    const dx=Math.abs(t.clientX-_dragStartX),dy=Math.abs(t.clientY-_dragStartY);
+    if(dx>8||dy>8){_dragMoved=true;clearTimeout(_dragTO);}
+    return; // deixa o scroll nativo agir
+  }
+  // Modo reordenar ativo: bloqueia scroll e move
   e.preventDefault();
-  const touch=e.touches[0];
-  const x=touch.clientX;
+  const x=t.clientX;
   const cont=document.getElementById("atalhos-container");
   const items=[...cont.querySelectorAll(".atalho-item:not(.drag-ativo)")];
   items.forEach(item=>{
     const r=item.getBoundingClientRect();
-    if(x>r.left+8&&x<r.right-8){
+    if(x>r.left+r.width*0.3&&x<r.right-r.width*0.3){
       const j=parseInt(item.dataset.idx);
       if(j===_dragIdx)return;
       const todos=getAtalhos();
@@ -1100,18 +1069,24 @@ function moveDrag(e){
       saveAtalhos([...ativos,...inat]);
       _dragIdx=j;
       renderAtalhos();
-      if(navigator.vibrate)navigator.vibrate(20);
+      const cont2=document.getElementById("atalhos-container");
+      if(cont2)cont2.classList.add("reordenando");
+      const novoEl=document.querySelector(`.atalho-item[data-idx="${j}"]`);
+      if(novoEl){novoEl.classList.add("drag-ativo");_dragEl=novoEl;}
+      if(navigator.vibrate)navigator.vibrate(15);
     }
   });
 }
 function fimDrag(e){
   clearTimeout(_dragTO);
+  const cont=document.getElementById("atalhos-container");
+  if(cont)cont.classList.remove("reordenando");
   if(_dragging){
-    _dragging=false;
+    _dragging=false;_acabouDrag=true;setTimeout(()=>_acabouDrag=false,300);
     document.querySelectorAll(".atalho-item.drag-ativo").forEach(el=>el.classList.remove("drag-ativo"));
     renderAtalhos();
   }
-  _dragEl=null;
+  _dragEl=null;_dragMoved=false;
 }
 
 // ── CRIAR ATALHO ──
