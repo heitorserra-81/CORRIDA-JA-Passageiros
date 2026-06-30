@@ -69,6 +69,10 @@ input,textarea{-webkit-user-select:text!important;user-select:text!important;}
 .emerg-box{background:rgba(251,191,36,0.05);border:1px solid var(--border);border-radius:14px;padding:14px;}
 .emerg-titulo{font-size:12px;font-weight:700;color:var(--dourado);margin-bottom:5px;}
 .emerg-desc{font-size:11px;color:var(--muted);margin-bottom:10px;}
+.sobre-row{display:flex;align-items:center;gap:11px;padding:10px 13px;background:var(--card2);border:1px solid var(--border);border-radius:12px;}
+.sobre-row span{font-size:20px;}
+.sobre-lb{font-size:13px;font-weight:700;color:#fff;}
+.sobre-vl{font-size:11px;color:var(--muted);margin-top:1px;}
 .termos-texto{max-height:50vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:6px;}
 .termos-texto h4{font-size:13px;font-weight:800;color:var(--dourado);margin:14px 0 5px;}
 .termos-texto h4:first-child{margin-top:0;}
@@ -107,13 +111,13 @@ input[type=file]{display:none;}
 .atalho-item.drag-ativo{overflow:hidden;transform:scale(1.18) translateY(-10px) rotate(2deg)!important;z-index:1000;box-shadow:0 22px 48px rgba(251,191,36,0.7),0 12px 22px rgba(0,0,0,0.6)!important;filter:brightness(1.15);transition:none!important;touch-action:none;}
 .atalhos-scroll.reordenando{overflow:visible;touch-action:none;}
 .atalho-luz{position:absolute;top:50%;left:50%;width:200%;height:200%;animation:gira 2s linear infinite;border-radius:14px;}
-.atalho-conteudo{position:relative;z-index:2;background:var(--card2);border-radius:12px;padding:11px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.atalho-conteudo{position:relative;z-index:2;background:var(--card2);border-radius:12px;padding:11px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;}
 .atalho-ic{font-size:22px;}
 .atalho-lb{font-size:11px;font-weight:600;color:var(--muted);text-align:center;line-height:1.2;}
 .atalho-end{font-size:9px;color:var(--muted);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:76px;}
 
 /* CARD DESTINO */
-.dest-card{margin:12px 14px 10px;background:rgba(15,26,46,0.92);border:1px solid var(--border);border-radius:20px;padding:14px;backdrop-filter:blur(10px);}
+.dest-card{margin:12px 14px 10px;background:rgba(15,26,46,0.55);border:1px solid var(--border);border-radius:20px;padding:14px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
 .dest-titulo{font-size:15px;font-weight:800;color:#fff;margin-bottom:10px;}
 .chips{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:none;margin-bottom:8px;}
 .chips::-webkit-scrollbar{display:none;}
@@ -263,11 +267,12 @@ input[type=file]{display:none;}
 .perf-hero-bg{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;pointer-events:none;}
 .perf-hero-bg::after{content:"";position:absolute;top:0;left:0;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,0.28),transparent);animation:heroBrilho 3s linear infinite;}
 .perf-hero-content{position:relative;z-index:2;padding:20px;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.perf-av-outer{position:relative;width:104px;height:104px;}
 .perf-av-ring{position:relative;width:104px;height:104px;border-radius:50%;padding:4px;overflow:hidden;background:var(--nivel-grad,conic-gradient(#cd7f32,#f0b97d,#8b5a2b,#cd7f32));}
 .perf-av-ring::before{content:"";position:absolute;top:50%;left:50%;width:150%;height:150%;border-radius:50%;background:var(--nivel-grad,conic-gradient(#cd7f32,#f0b97d,#8b5a2b,#cd7f32));animation:giraRot 3s linear infinite;z-index:0;}
 .perf-av-big{position:relative;z-index:1;width:96px;height:96px;border-radius:50%;background:var(--card2);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:42px;box-shadow:0 4px 14px rgba(0,0,0,0.5);}
 .perf-av-big img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-.perf-av-ring .perf-edit{position:absolute;bottom:2px;right:2px;width:30px;height:30px;border-radius:50%;background:var(--dourado);border:3px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;z-index:5;}
+.perf-av-outer .perf-edit{position:absolute;bottom:-2px;right:-2px;width:32px;height:32px;border-radius:50%;background:var(--dourado);border:3px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,0.4);}
 .perf-nome-big{font-size:22px;font-weight:900;color:#fff;margin-top:12px;text-shadow:0 2px 8px rgba(0,0,0,0.6);}
 .perf-nivel{margin-top:8px;background:rgba(0,0,0,0.3);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:5px 15px;font-size:12px;font-weight:700;color:#ffe9b0;}
 .perf-stats-row{display:flex;gap:10px;margin:0 16px 16px;}
@@ -538,16 +543,7 @@ input[type=file]{display:none;}
       <div class="origem-txt" id="origem-txt">Obtendo sua localização...</div>
     </div>
     <input class="campo-obs" id="campo-obs" type="text" placeholder="Observação (ponto de referência)..." autocomplete="off"/>
-    <div class="pgto-sec">
-      <div class="pgto-titulo">💰 Forma de pagamento</div>
-      <div class="pgto-opcoes">
-        <button class="pgto-btn ativo" data-pgto="Dinheiro" onclick="selPgto(this,'Dinheiro')">💵 Dinheiro</button>
-        <button class="pgto-btn" data-pgto="Pix" onclick="selPgto(this,'Pix')">📱 Pix</button>
-        <button class="pgto-btn" data-pgto="Débito" onclick="selPgto(this,'Débito')">💳 Débito</button>
-        <button class="pgto-btn" data-pgto="Crédito" onclick="selPgto(this,'Crédito')">💳 Crédito</button>
-      </div>
-      <input class="campo-obs" id="campo-troco" type="text" placeholder="Vai pagar com quanto? (ex: R$ 50 - p/ troco)" autocomplete="off" style="margin-top:7px;"/>
-    </div>
+
     <div class="valor-card" id="valor-card">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div><div class="valor-num" id="valor-num">R$ --</div><div class="valor-info" id="valor-dist">calculando...</div></div>
@@ -716,9 +712,11 @@ input[type=file]{display:none;}
   <div class="perf-hero">
     <div class="perf-hero-bg"></div>
     <div class="perf-hero-content">
-      <div class="perf-av-ring" id="perf-av-ring">
-        <div class="perf-av-big" id="perf-av">
-          <span id="perf-initial">👤</span>
+      <div class="perf-av-outer">
+        <div class="perf-av-ring" id="perf-av-ring">
+          <div class="perf-av-big" id="perf-av">
+            <span id="perf-initial">👤</span>
+          </div>
         </div>
         <div class="perf-edit" onclick="event.stopPropagation();document.getElementById('inp-foto-perf').click()">✏️</div>
       </div>
@@ -858,6 +856,50 @@ input[type=file]{display:none;}
   </div>
 </div>
 
+<!-- MODAL FORMA DE PAGAMENTO -->
+<div class="modal-base" id="modal-pgto">
+  <div class="modal-sheet">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:3px;margin:0 auto 16px;"></div>
+    <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:6px;">
+      <img src="https://heitorserra-81.github.io/CORRIDA-JA-Passageiros/IMG_0851.jpeg" style="width:64px;height:64px;border-radius:16px;object-fit:cover;box-shadow:0 4px 16px rgba(251,191,36,0.3);"/>
+      <div style="font-size:20px;font-weight:900;color:#fff;margin-top:8px;letter-spacing:0.5px;">Corrida Já</div>
+    </div>
+    <div style="font-size:14px;color:var(--text);text-align:center;margin-bottom:18px;font-weight:600;">Escolha a forma de pagamento desta corrida</div>
+    <div class="pgto-opcoes" style="margin-bottom:8px;">
+      <button class="pgto-btn ativo" data-pgto="Dinheiro" onclick="selPgto(this,'Dinheiro')">💵 Dinheiro</button>
+      <button class="pgto-btn" data-pgto="Pix" onclick="selPgto(this,'Pix')">📱 Pix</button>
+      <button class="pgto-btn" data-pgto="Débito" onclick="selPgto(this,'Débito')">💳 Débito</button>
+      <button class="pgto-btn" data-pgto="Crédito" onclick="selPgto(this,'Crédito')">💳 Crédito</button>
+    </div>
+    <input class="campo-input" id="pgto-troco" type="text" placeholder="Vai pagar com quanto? (ex: R$ 50 - p/ troco)" autocomplete="off" style="margin-bottom:14px;"/>
+    <button class="btn-p" onclick="confirmarPgtoEChamar()" style="width:100%;margin-bottom:9px;">Confirmar e chamar</button>
+    <button class="btn-cancel" onclick="cancelarPgto()" style="width:100%;padding:13px;border-radius:14px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL SOBRE -->
+<div class="modal-base" id="modal-sobre">
+  <div class="modal-sheet">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:3px;margin:0 auto 16px;"></div>
+    <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;">
+      <img src="https://heitorserra-81.github.io/CORRIDA-JA-Passageiros/IMG_0851.jpeg" style="width:78px;height:78px;border-radius:18px;object-fit:cover;box-shadow:0 6px 20px rgba(251,191,36,0.3);"/>
+      <div style="font-size:22px;font-weight:900;color:#fff;margin-top:10px;letter-spacing:0.5px;">Corrida Já</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px;">Versão 1.0</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px;">Desenvolvido por <b style="color:var(--dourado);">Heitor Serra Neto</b></div>
+    </div>
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;">
+      <div style="font-size:13px;color:var(--text);line-height:1.6;">O Corrida Já é uma plataforma que conecta passageiros a motoristas particulares de forma rápida e segura na sua região. Chame uma corrida, acompanhe o motorista em tempo real e viaje com tranquilidade.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+      <div class="sobre-row"><span>🛡️</span><div><div class="sobre-lb">Segurança</div><div class="sobre-vl">Botão SOS e compartilhamento de corrida</div></div></div>
+      <div class="sobre-row"><span>📍</span><div><div class="sobre-lb">Cobertura</div><div class="sobre-vl">Holambra, Jaguariúna, Arthur Nogueira e região</div></div></div>
+      <div class="sobre-row"><span>💬</span><div><div class="sobre-lb">Suporte</div><div class="sobre-vl">WhatsApp (19) 98248-0386</div></div></div>
+    </div>
+    <button class="btn-p" onclick="document.getElementById('modal-sobre').classList.remove('show');document.getElementById('modal-termos').classList.add('show')" style="width:100%;margin-bottom:9px;background:var(--card2);color:var(--dourado);border:1px solid var(--border);">📄 Termos de Uso</button>
+    <button class="btn-cancel" onclick="document.getElementById('modal-sobre').classList.remove('show')" style="width:100%;padding:13px;border-radius:14px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Fechar</button>
+  </div>
+</div>
+
 <!-- CONFIG -->
 <div id="tela-config">
   <div class="config-hdr">
@@ -950,6 +992,8 @@ input[type=file]{display:none;}
     <div class="menu-item" onclick="abrirAgendada();fecharMenu()">📅 Agendar corrida</div>
     <div class="menu-sep"></div>
     <div class="menu-item" onclick="abrirIndicar();fecharMenu()">🎁 Indicar amigo</div>
+    <div class="menu-sep"></div>
+    <div class="menu-item" onclick="abrirSobre();fecharMenu()">ℹ️ Sobre o aplicativo</div>
     <div class="menu-sep"></div>
     <div class="menu-item" style="color:#ef4444;" onclick="sair()">🚪 Sair da conta</div>
   </div>
@@ -1151,6 +1195,7 @@ function altTab(t){["cad","ent"].forEach(x=>{document.getElementById("form-"+x).
 // ── RECUPERAR SENHA ──
 const ADMIN_WHATSAPP="5519982480386"; // configurável no painel admin futuramente
 let recUserDoc=null;
+function abrirSobre(){document.getElementById("modal-sobre").classList.add("show");}
 function abrirRecuperar(){
   document.getElementById("modal-recuperar").classList.add("show");
   document.getElementById("rec-passo1").style.display="block";
@@ -1298,6 +1343,9 @@ function renderAtalhos(){
       </div>
     </div>`;
   }).join("");
+  // garantir que nenhum item fique com drag preso e brilho vazando
+  cont.querySelectorAll(".atalho-item.drag-ativo").forEach(el=>el.classList.remove("drag-ativo"));
+  cont.classList.remove("reordenando");
 }
 
 function usarAtalho(idx){
@@ -1600,23 +1648,41 @@ function selPgto(btn,forma){
   formaPgto=forma;
   document.querySelectorAll(".pgto-btn").forEach(b=>b.classList.remove("ativo"));
   btn.classList.add("ativo");
-  const troco=document.getElementById("campo-troco");
+  const troco=document.getElementById("pgto-troco");
   if(troco)troco.style.display=(forma==="Dinheiro")?"block":"none";
 }
+function cancelarPgto(){
+  document.getElementById("modal-pgto").classList.remove("show");
+  formaPgto="Dinheiro";
+  const t=document.getElementById("pgto-troco");if(t)t.value="";
+  irPara("home");
+}
 
-async function chamarCorrida(){
+function chamarCorrida(){
   if(!destSel){toast("Selecione o destino");return;}
   if(!posAtual){toast("Aguarde obter sua localização");return;}
   try{getAC();}catch(e){}
+  // Mostra a tela buscando PAUSADA (sem contar) e abre o card de pagamento por cima
+  mostrarTela("tela-buscando");
+  document.getElementById("busc-dest").textContent="→ "+destSel.nome.split(",")[0];
+  document.getElementById("busc-num").textContent="0";
+  // garantir que a busca não começou ainda
+  if(contBusc){clearInterval(contBusc);contBusc=null;}
+  // abrir card de forma de pagamento
+  document.getElementById("modal-pgto").classList.add("show");
+}
+
+async function confirmarPgtoEChamar(){
+  document.getElementById("modal-pgto").classList.remove("show");
   loading(true);
   try{
     const km=dKm(posAtual[0],posAtual[1],destSel.lat,destSel.lng),val=tabela(km);
     const id="cor_"+Date.now();
-    const corrida={id,status:"aguardando",clienteId:user.id,clienteNome:user.nome,clienteFone:user.fone||"",clienteFoto:user.foto||null,clienteTipo:user.tipo||"cadastrado",origemLat:posAtual[0],origemLng:posAtual[1],destino:destSel.nome.split(",").slice(0,2).join(","),destinoLat:destSel.lat,destinoLng:destSel.lng,obs:document.getElementById("campo-obs").value.trim()||null,formaPgto:formaPgto,trocoPara:(formaPgto==="Dinheiro"?(document.getElementById("campo-troco")?.value.trim()||null):null),valorEstimado:destSel.valorEst||"R$ "+val.toFixed(2).replace(".",","),distanciaKm:destSel.distKm||km.toFixed(1),criadoEm:firebase.firestore.FieldValue.serverTimestamp()};
+    const troco=(formaPgto==="Dinheiro"?(document.getElementById("pgto-troco")?.value.trim()||null):null);
+    const corrida={id,status:"aguardando",clienteId:user.id,clienteNome:user.nome,clienteFone:user.fone||"",clienteFoto:user.foto||null,clienteTipo:user.tipo||"cadastrado",origemLat:posAtual[0],origemLng:posAtual[1],destino:destSel.nome.split(",").slice(0,2).join(","),destinoLat:destSel.lat,destinoLng:destSel.lng,obs:document.getElementById("campo-obs").value.trim()||null,formaPgto:formaPgto,trocoPara:troco,valorEstimado:destSel.valorEst||"R$ "+val.toFixed(2).replace(".",","),distanciaKm:destSel.distKm||km.toFixed(1),criadoEm:firebase.firestore.FieldValue.serverTimestamp()};
     await db.collection("cj_corridas").doc(id).set(corrida);
     corridaAtiva={...corrida,id};loading(false);
-    mostrarTela("tela-buscando");
-    document.getElementById("busc-dest").textContent="→ "+corrida.destino.split(",")[0];
+    // AGORA sim inicia a contagem e a busca
     _seg=0;if(contBusc)clearInterval(contBusc);
     contBusc=setInterval(()=>{_seg++;document.getElementById("busc-num").textContent=_seg;},1000);
     escutarCorrida(id);
