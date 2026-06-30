@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#0f1a2e"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="Corrida Já"/>
 <link rel="manifest" id="manifest-link"/>
 <link rel="apple-touch-icon" id="apple-icon"/>
@@ -22,7 +22,7 @@
   --dourado:#fbbf24;--dourado2:#f59e0b;--dourado3:#b45309;
   --border:rgba(251,191,36,0.2);--text:#f0e6c8;--muted:#7a8fa8;
   --verde:#22c55e;--danger:#ef4444;
-  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
+  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--satmin:max(env(safe-area-inset-top,0px),12px);
 }
 html,body{height:100%;font-family:-apple-system,sans-serif;color:var(--text);overflow:hidden;touch-action:pan-x pan-y;-webkit-user-select:none;user-select:none;background:#080f1e;}
 input,textarea{-webkit-user-select:text!important;user-select:text!important;}
@@ -39,6 +39,7 @@ input,textarea{-webkit-user-select:text!important;user-select:text!important;}
 /* SCREENS */
 .screen{display:none;position:fixed;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-direction:column;z-index:2;background:transparent;}
 .screen.ativo{display:flex;}
+#tela-perfil>*{flex-shrink:0;}
 
 /* SPLASH */
 #tela-splash{align-items:center;justify-content:center;gap:18px;padding-top:max(40px,var(--sat));}
@@ -77,7 +78,7 @@ input[type=file]{display:none;}
 .btn-sec{width:100%;padding:12px;border-radius:13px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
 
 /* HOME */
-#tela-home{padding-bottom:72px;}
+#tela-home{padding-bottom:24px;}
 .home-header{padding:20px 18px 14px;padding-top:max(20px,calc(var(--sat)+16px));background:linear-gradient(180deg,rgba(26,42,74,0.96) 0%,rgba(15,26,46,0.7) 70%,transparent 100%);}
 .home-header-top{display:flex;align-items:center;gap:10px;position:relative;min-height:72px;}
 .avatar{width:48px;height:48px;border-radius:50%;background:var(--card2);border:2px solid var(--dourado);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;font-size:14px;font-weight:700;color:var(--dourado);}
@@ -156,7 +157,8 @@ input[type=file]{display:none;}
   animation:luzReluzente 2.8s linear infinite;
   pointer-events:none;
 }
-@keyframes luzReluzente{0%{transform:translateX(-55%);}100%{transform:translateX(55%);}}
+@keyframes luzReluzente{0%,100%{transform:translateX(-60%);}50%{transform:translateX(60%);}}
+@keyframes heroBrilho{0%{transform:translateX(-200%);}100%{transform:translateX(400%);}}100%{left:160%;}}100%{transform:translateX(55%);}}
 .btn-chamar img,.btn-chamar span{position:relative;z-index:1;}
 .btn-chamar:disabled{opacity:0.92;cursor:default;}
 
@@ -234,6 +236,42 @@ input[type=file]{display:none;}
 .perf-nome{font-size:15px;font-weight:700;color:#fff;margin-bottom:3px;}
 .perf-fone{font-size:12px;color:var(--muted);}
 .perf-badge{display:inline-flex;margin-top:4px;background:rgba(251,191,36,0.08);border:1px solid var(--border);border-radius:7px;padding:2px 8px;font-size:10px;font-weight:700;color:var(--dourado);}
+/* PERFIL NOVO */
+.perf-hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.perf-marca{display:flex;flex-direction:column;align-items:center;gap:5px;padding:4px 0 14px;}
+.perf-marca-logo{width:54px;height:54px;border-radius:14px;object-fit:cover;box-shadow:0 4px 14px rgba(251,191,36,0.25);}
+.perf-marca-txt{font-size:11px;color:var(--muted);}
+.perf-marca-txt b{color:var(--dourado);font-weight:700;}
+.perf-hero{position:relative;margin:0 16px 16px;border-radius:22px;border:1px solid var(--border);background:linear-gradient(135deg,#1e40af 0%,#2563eb 35%,#7c3aed 65%,#b45309 100%);overflow:hidden;}
+.perf-hero-bg{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;pointer-events:none;}
+.perf-hero-bg::after{content:"";position:absolute;top:0;left:0;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,0.28),transparent);animation:heroBrilho 3s linear infinite;}
+.perf-hero-content{position:relative;z-index:2;padding:20px;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.perf-av-big{position:relative;width:96px;height:96px;border-radius:50%;background:var(--card2);border:4px solid #fff;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:44px;box-shadow:0 8px 24px rgba(0,0,0,0.55);}
+.perf-av-big .perf-edit{position:absolute;bottom:3px;right:3px;width:28px;height:28px;border-radius:50%;background:var(--dourado);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;z-index:3;}
+.perf-av-big img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.perf-nome-big{font-size:22px;font-weight:900;color:#fff;margin-top:12px;text-shadow:0 2px 8px rgba(0,0,0,0.6);}
+.perf-nivel{margin-top:8px;background:rgba(0,0,0,0.3);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:5px 15px;font-size:12px;font-weight:700;color:#ffe9b0;}
+.perf-stats-row{display:flex;gap:10px;margin:0 16px 16px;}
+.perf-stat-wrap{flex:1;position:relative;border-radius:16px;padding:2px;overflow:hidden;}
+.perf-stat-wrap::before{content:"";position:absolute;top:50%;left:50%;width:250%;height:250%;background:conic-gradient(#ef4444,#f97316,#fbbf24,#22c55e,#3b82f6,#a855f7,#ef4444);animation:giraBorda 4s linear infinite;transform:translate(-50%,-50%);}
+.perf-stat{position:relative;z-index:2;background:var(--card);border-radius:14px;padding:16px 8px;text-align:center;}
+.perf-stat-num{font-size:21px;font-weight:900;color:var(--dourado);}
+.perf-stat-lb{font-size:10px;color:var(--muted);margin-top:4px;font-weight:600;}
+.perf-sec-tit{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin:18px 18px 9px;}
+.perf-info-card{margin:0 16px;background:var(--card2);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.perf-info-row{display:flex;align-items:center;gap:13px;padding:14px 16px;border-bottom:1px solid rgba(251,191,36,0.07);}
+.perf-info-row:last-child{border-bottom:none;}
+.perf-info-ic{font-size:20px;width:26px;text-align:center;flex-shrink:0;}
+.perf-info-txt{flex:1;min-width:0;}
+.perf-info-lb{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.perf-info-vl{font-size:15px;color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.perf-emerg{border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.05);}
+.perf-acoes{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 16px;}
+.perf-acao{display:flex;align-items:center;gap:9px;padding:15px 13px;background:var(--card);border:1px solid var(--border);border-radius:14px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;text-align:left;}
+.perf-acao span{font-size:18px;}
+.perf-acao:active{background:var(--card2);}
+.perf-hist{margin:0 16px;display:flex;flex-direction:column;gap:8px;}
+
 .hist-item{display:flex;align-items:center;gap:11px;padding:12px 16px;border-bottom:1px solid rgba(251,191,36,0.04);}
 .hist-item:last-child{border-bottom:none;}
 .hist-ic{width:36px;height:36px;border-radius:11px;background:var(--card2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;}
@@ -382,7 +420,7 @@ input[type=file]{display:none;}
       <div style="display:flex;flex-direction:column;gap:10px;">
         <div><div class="campo-label">Nome completo</div><input class="campo-input" id="cad-nome" type="text" placeholder="Seu nome" autocomplete="name"/></div>
         <div><div class="campo-label">WhatsApp</div><input class="campo-input" id="cad-fone" type="tel" placeholder="(19) 99999-9999"/></div>
-        <div><div class="campo-label">CPF (opcional)</div><input class="campo-input" id="cad-cpf" type="text" placeholder="000.000.000-00" maxlength="14"/></div>
+        <div><div class="campo-label">CPF *</div><input class="campo-input" id="cad-cpf" type="text" inputmode="numeric" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)"/></div>
         <div class="emerg-box">
           <div class="emerg-titulo">🛡️ Para sua segurança</div>
           <div class="emerg-desc">Deixe um contato de emergência. Em caso de necessidade, poderemos acioná-lo.</div>
@@ -418,7 +456,7 @@ input[type=file]{display:none;}
   <div class="home-header">
     <div class="home-header-top">
       <!-- ESQUERDA: foto + saudacao + nome -->
-      <div style="display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0;" onclick="abrirEditarPerfil()">
+      <div style="display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0;" onclick="irPara('perfil')">
         <div class="avatar" id="home-avatar"><span id="home-initial">👤</span></div>
         <div>
           <div style="font-size:13px;color:rgba(255,255,255,0.65);" id="saudacao">Bom dia!</div>
@@ -478,10 +516,7 @@ input[type=file]{display:none;}
     <div class="mot-badge" style="top:8px;left:8px;background:rgba(4,13,4,0.88);border:1px solid rgba(34,197,94,0.3);color:#22c55e;">🟢 Motoristas online</div>
     <div class="mot-badge" style="top:8px;right:8px;background:rgba(8,15,30,0.88);border:1px solid var(--border);color:var(--dourado);" id="count-mot">0 disponíveis</div>
   </div>
-  <div class="bottom-nav">
-    <button class="nav-btn ativo" onclick="irPara('home')"><div class="nav-ic">🏠</div><div class="nav-lb">Início</div></button>
-    <button class="nav-btn" onclick="irPara('perfil')"><div class="nav-ic">👤</div><div class="nav-lb">Perfil</div></button>
-  </div>
+  
 </div>
 
 <!-- MODAL MAPA DESTINO -->
@@ -616,57 +651,65 @@ input[type=file]{display:none;}
 
 <!-- PERFIL -->
 <div class="screen" id="tela-perfil">
-  <div class="perf-hdr"><h2>Meu Perfil</h2></div>
-  <div class="modal-base" id="modal-editar">
-    <div class="modal-sheet">
-      <div style="text-align:center;margin-bottom:16px;">
-        <div style="position:relative;display:inline-block;">
-          <div id="med-foto" style="width:76px;height:76px;border-radius:50%;background:var(--card2);border:3px solid var(--dourado);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto;cursor:pointer;" onclick="document.getElementById('inp-foto-mod').click()">👤</div>
-          <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;border-radius:50%;background:var(--dourado);display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;" onclick="document.getElementById('inp-foto-mod').click()">✏️</div>
-          <input type="file" id="inp-foto-mod" accept="image/*" onchange="atualizarFoto(this)"/>
-        </div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:13px;">
-        <div><div class="campo-label">Nome</div><input id="ed-nome" class="campo-input" type="text" placeholder="Seu nome"/></div>
-        <div><div class="campo-label">WhatsApp</div><input id="ed-fone" class="campo-input" type="tel" placeholder="(19) 99999-9999"/></div>
-        <div style="background:rgba(251,191,36,0.05);border:1px solid var(--border);border-radius:13px;padding:12px;">
-          <div style="font-size:12px;font-weight:700;color:var(--dourado);margin-bottom:4px;">🛡️ Contato de emergência</div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Usado no SOS e ao compartilhar sua corrida</div>
-          <div style="display:flex;flex-direction:column;gap:7px;">
-            <input id="ed-emerg-nome" class="campo-input" type="text" placeholder="Nome do contato"/>
-            <input id="ed-emerg-fone" class="campo-input" type="tel" placeholder="WhatsApp do contato"/>
-          </div>
-        </div>
-      </div>
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:11px;margin-bottom:13px;display:flex;gap:9px;">
-        <div style="flex:1;text-align:center;"><div style="font-size:19px;font-weight:800;color:#fff;" id="med-corridas">0</div><div style="font-size:10px;color:var(--muted);">Corridas</div></div>
-        <div style="flex:1;text-align:center;"><div style="font-size:11px;font-weight:700;color:var(--dourado);" id="med-desde">--</div><div style="font-size:10px;color:var(--muted);">Membro desde</div></div>
-      </div>
-      <button class="btn-ok" onclick="salvarPerfil()">Salvar alterações</button>
-      <button class="btn-cancel" onclick="fecharEditarPerfil()">Cancelar</button>
-    </div>
+  <div class="perf-hdr">
+    <button onclick="irPara('home')" style="background:none;border:none;color:var(--dourado);font-size:22px;cursor:pointer;padding:3px;">←</button>
+    <h2 style="margin:0;">Meu Perfil</h2>
+    <button onclick="abrirEditarPerfil()" style="background:rgba(251,191,36,0.1);border:1px solid var(--border);color:var(--dourado);font-size:12px;font-weight:700;cursor:pointer;padding:7px 14px;border-radius:20px;">✏️ Editar</button>
   </div>
-  <div class="perf-card">
-    <div class="perf-user" onclick="abrirEditarPerfil()">
-      <div class="perf-av" id="perf-av">
+
+  <div class="perf-marca">
+    <img src="https://heitorserra-81.github.io/CORRIDA-JA-Passageiros/IMG_0851.jpeg" class="perf-marca-logo"/>
+    <div class="perf-marca-txt">Desenvolvido por <b>Heitor Serra Neto</b></div>
+  </div>
+
+  <div class="perf-hero">
+    <div class="perf-hero-bg"></div>
+    <div class="perf-hero-content">
+      <div class="perf-av-big" id="perf-av">
         <span id="perf-initial">👤</span>
         <div class="perf-edit" onclick="event.stopPropagation();document.getElementById('inp-foto-perf').click()">✏️</div>
       </div>
       <input type="file" id="inp-foto-perf" accept="image/*" onchange="atualizarFoto(this)"/>
-      <div style="flex:1;">
-        <div class="perf-nome" id="perf-nome">--</div>
-        <div class="perf-fone" id="perf-fone">--</div>
-        <div class="perf-badge">Passageiro ›</div>
-      </div>
+      <div class="perf-nome-big" id="perf-nome">--</div>
+      <div class="perf-nivel" id="perf-nivel">🥉 Passageiro Bronze</div>
     </div>
-    <div id="hist-lista"></div>
   </div>
+
+  <div class="perf-stats-row">
+    <div class="perf-stat-wrap"><div class="perf-stat"><div class="perf-stat-num" id="ps-corridas">0</div><div class="perf-stat-lb">Corridas</div></div></div>
+    <div class="perf-stat-wrap"><div class="perf-stat"><div class="perf-stat-num" id="ps-aval">5.0</div><div class="perf-stat-lb">⭐ Avaliação</div></div></div>
+    <div class="perf-stat-wrap"><div class="perf-stat"><div class="perf-stat-num" id="ps-membro">--</div><div class="perf-stat-lb">Membro desde</div></div></div>
+  </div>
+
+  <div class="perf-sec-tit">Dados pessoais</div>
+  <div class="perf-info-card">
+    <div class="perf-info-row"><span class="perf-info-ic">👤</span><div class="perf-info-txt"><div class="perf-info-lb">Nome completo</div><div class="perf-info-vl" id="pi-nome">--</div></div></div>
+    <div class="perf-info-row"><span class="perf-info-ic">📱</span><div class="perf-info-txt"><div class="perf-info-lb">WhatsApp</div><div class="perf-info-vl" id="pi-fone">--</div></div></div>
+    <div class="perf-info-row"><span class="perf-info-ic">🪪</span><div class="perf-info-txt"><div class="perf-info-lb">CPF</div><div class="perf-info-vl" id="pi-cpf">--</div></div></div>
+    <div class="perf-info-row"><span class="perf-info-ic">🎫</span><div class="perf-info-txt"><div class="perf-info-lb">Código de indicação</div><div class="perf-info-vl" id="pi-codigo">--</div></div></div>
+  </div>
+
+  <div class="perf-sec-tit">🛡️ Contato de emergência</div>
+  <div class="perf-info-card perf-emerg" id="perf-emerg-card">
+    <div class="perf-info-row"><span class="perf-info-ic">🆘</span><div class="perf-info-txt"><div class="perf-info-lb">Nome</div><div class="perf-info-vl" id="pi-emerg-nome">Não cadastrado</div></div></div>
+    <div class="perf-info-row"><span class="perf-info-ic">☎️</span><div class="perf-info-txt"><div class="perf-info-lb">WhatsApp</div><div class="perf-info-vl" id="pi-emerg-fone">Não cadastrado</div></div></div>
+  </div>
+  <div id="perf-emerg-aviso" style="display:none;margin:8px 16px 0;">
+    <button onclick="abrirEditarPerfil()" style="width:100%;padding:13px;border-radius:13px;background:rgba(239,68,68,0.1);border:1px dashed rgba(239,68,68,0.4);color:#ef4444;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">⚠️ Cadastrar contato de emergência</button>
+  </div>
+
+  <div class="perf-sec-tit">Atalhos</div>
+  <div class="perf-acoes">
+    <button class="perf-acao" onclick="document.getElementById('modal-cred').classList.add('show')"><span>💳</span> Comprar créditos</button>
+    <button class="perf-acao" onclick="abrirAgendada()"><span>📅</span> Agendar corrida</button>
+    <button class="perf-acao" onclick="abrirIndicar()"><span>🎁</span> Indicar amigo</button>
+    <button class="perf-acao" onclick="abrirConfig()"><span>⚙️</span> Configurações</button>
+  </div>
+
+  <div id="hist-lista" style="display:none;"></div>
+
   <button class="btn-sair" onclick="sair()">Sair da conta</button>
-  <div style="text-align:center;margin:16px 0;font-size:10px;color:rgba(255,255,255,0.1);">Corrida Já · Desenvolvido por Heitor Serra Neto</div>
-  <div class="bottom-nav">
-    <button class="nav-btn" onclick="irPara('home')"><div class="nav-ic">🏠</div><div class="nav-lb">Início</div></button>
-    <button class="nav-btn ativo" onclick="irPara('perfil')"><div class="nav-ic">👤</div><div class="nav-lb">Perfil</div></button>
-  </div>
+  <div style="text-align:center;margin:16px 0 30px;font-size:10px;color:rgba(255,255,255,0.15);">Corrida Já · Desenvolvido por Heitor Serra Neto</div>
 </div>
 
 <!-- CONFIG -->
@@ -941,12 +984,30 @@ function irPara(dest){
   }
 }
 
+// ── CPF ──
+function mascaraCPF(el){
+  let v=el.value.replace(/\D/g,"").slice(0,11);
+  v=v.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+  el.value=v;
+}
+function validarCPF(cpf){
+  cpf=(cpf||"").replace(/\D/g,"");
+  if(cpf.length!==11||/^(\d)\1{10}$/.test(cpf))return false;
+  let s=0;for(let i=0;i<9;i++)s+=parseInt(cpf[i])*(10-i);
+  let d1=(s*10)%11;if(d1===10)d1=0;if(d1!==parseInt(cpf[9]))return false;
+  s=0;for(let i=0;i<10;i++)s+=parseInt(cpf[i])*(11-i);
+  let d2=(s*10)%11;if(d2===10)d2=0;if(d2!==parseInt(cpf[10]))return false;
+  return true;
+}
+
 // ── LOGIN ──
 function altTab(t){["cad","ent"].forEach(x=>{document.getElementById("form-"+x).style.display="none";document.getElementById("tab-"+x).classList.remove("ativo");});document.getElementById("form-"+t).style.display="block";document.getElementById("tab-"+t).classList.add("ativo");}
 async function cadastrar(){
   const nome=document.getElementById("cad-nome").value.trim();
   const fone=document.getElementById("cad-fone").value.trim();
+  const cpfVal=(document.getElementById("cad-cpf")?.value||"").trim();
   if(!nome||!fone){toast("Preencha nome e WhatsApp");return;}
+  if(!validarCPF(cpfVal)){toast("Digite um CPF válido");return;}
   loading(true);
   try{
     const id="pass_"+Date.now();
@@ -1525,17 +1586,44 @@ function atualizarHome(){
 }
 function atualizarPerfil(){
   if(!user)return;
-  document.getElementById("perf-nome").textContent=user.nome||"--";
-  document.getElementById("perf-fone").textContent=user.fone||"Sem cadastro";
-  const av=document.getElementById("perf-av");
-  if(user.foto)av.innerHTML=`<img src="${user.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/><div class="perf-edit" onclick="event.stopPropagation();document.getElementById('inp-foto-perf').click()">✏️</div>`;
-  else{document.getElementById("perf-initial").textContent=(user.nome||"P")[0].toUpperCase();}
+  const g=id=>document.getElementById(id);
+  g("perf-nome").textContent=user.nome||"--";
+  const av=g("perf-av");
+  if(user.foto)av.innerHTML=`<img src="${user.foto}"/><div class="perf-edit" onclick="event.stopPropagation();document.getElementById('inp-foto-perf').click()">✏️</div>`;
+  else g("perf-initial").textContent=(user.nome||"P")[0].toUpperCase();
+  // Nivel por nº de corridas
+  const tc=user.totalCorridas||0;
+  let nivel="🥉 Passageiro Bronze";
+  if(tc>=50)nivel="💎 Passageiro Diamante";
+  else if(tc>=20)nivel="🥇 Passageiro Ouro";
+  else if(tc>=5)nivel="🥈 Passageiro Prata";
+  if(g("perf-nivel"))g("perf-nivel").textContent=nivel;
+  // Stats
+  if(g("ps-corridas"))g("ps-corridas").textContent=tc;
+  if(g("ps-aval"))g("ps-aval").textContent=(user.avaliacao||5).toFixed(1);
+  if(g("ps-membro")){
+    let m="--";
+    if(user.criadoEm){const d=new Date(user.criadoEm);m=d.toLocaleDateString("pt-BR",{month:"short",year:"2-digit"});}
+    g("ps-membro").textContent=m;
+  }
+  // Dados pessoais
+  if(g("pi-nome"))g("pi-nome").textContent=user.nome||"--";
+  if(g("pi-fone"))g("pi-fone").textContent=user.fone||"--";
+  if(g("pi-cpf"))g("pi-cpf").textContent=user.cpf||"Não informado";
+  if(g("pi-codigo"))g("pi-codigo").textContent=(user.id||"").slice(-6).toUpperCase()||"--";
+  // Emergencia
+  const temEmerg=user.emergNome&&user.emergFone;
+  if(g("pi-emerg-nome"))g("pi-emerg-nome").textContent=user.emergNome||"Não cadastrado";
+  if(g("pi-emerg-fone"))g("pi-emerg-fone").textContent=user.emergFone||"Não cadastrado";
+  if(g("perf-emerg-card"))g("perf-emerg-card").style.display=temEmerg?"block":"none";
+  if(g("perf-emerg-aviso"))g("perf-emerg-aviso").style.display=temEmerg?"none":"block";
 }
 function abrirEditarPerfil(){
   if(!user)return;
   document.getElementById("modal-editar").classList.add("show");
   document.getElementById("ed-nome").value=user.nome||"";
   document.getElementById("ed-fone").value=user.fone||"";
+  if(document.getElementById("ed-cpf"))document.getElementById("ed-cpf").value=user.cpf||"";
   if(document.getElementById("ed-emerg-nome"))document.getElementById("ed-emerg-nome").value=user.emergNome||"";
   if(document.getElementById("ed-emerg-fone"))document.getElementById("ed-emerg-fone").value=user.emergFone||"";
   const fEl=document.getElementById("med-foto");
@@ -1547,12 +1635,14 @@ function fecharEditarPerfil(){document.getElementById("modal-editar").classList.
 async function salvarPerfil(){
   const nome=document.getElementById("ed-nome").value.trim();
   const fone=document.getElementById("ed-fone").value.trim();
+  const cpf=(document.getElementById("ed-cpf")?.value||"").trim();
   const emergNome=(document.getElementById("ed-emerg-nome")?.value||"").trim();
   const emergFone=(document.getElementById("ed-emerg-fone")?.value||"").trim();
   if(!nome){toast("Informe seu nome");return;}
+  if(cpf&&!validarCPF(cpf)){toast("CPF inválido");return;}
   loading(true);
   try{
-    const upd={nome,fone,emergNome,emergFone};
+    const upd={nome,fone,cpf,emergNome,emergFone};
     if(user.tipo!=="anonimo")await db.collection("cj_passageiros").doc(user.id).update(upd);
     Object.assign(user,upd);
     localStorage.setItem("cj_user",JSON.stringify(user));
