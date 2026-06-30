@@ -69,6 +69,17 @@ input,textarea{-webkit-user-select:text!important;user-select:text!important;}
 .emerg-box{background:rgba(251,191,36,0.05);border:1px solid var(--border);border-radius:14px;padding:14px;}
 .emerg-titulo{font-size:12px;font-weight:700;color:var(--dourado);margin-bottom:5px;}
 .emerg-desc{font-size:11px;color:var(--muted);margin-bottom:10px;}
+.termos-texto{max-height:50vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:6px;}
+.termos-texto h4{font-size:13px;font-weight:800;color:var(--dourado);margin:14px 0 5px;}
+.termos-texto h4:first-child{margin-top:0;}
+.termos-texto p{font-size:12px;color:var(--text);line-height:1.55;margin-bottom:4px;}
+.termos-check{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--muted);cursor:pointer;padding:4px 2px;line-height:1.4;}
+.termos-check input{width:20px;height:20px;flex-shrink:0;accent-color:var(--dourado);margin-top:1px;}
+.termos-check a{color:var(--dourado);font-weight:600;text-decoration:underline;cursor:pointer;}
+.seg-box{background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);border-radius:14px;padding:14px;}
+.seg-titulo{font-size:12px;font-weight:700;color:#60a5fa;margin-bottom:5px;}
+.seg-desc{font-size:11px;color:var(--muted);margin-bottom:10px;}
+select.campo-input{-webkit-appearance:none;appearance:none;}
 .foto-btn{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--card);border:1px solid var(--border);border-radius:13px;cursor:pointer;}
 .foto-prev{width:50px;height:50px;border-radius:50%;background:var(--card2);border:2px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;}
 .foto-prev img{width:100%;height:100%;object-fit:cover;}
@@ -125,6 +136,11 @@ input[type=file]{display:none;}
 .origem-txt.ok{color:var(--verde);}
 .campo-obs{width:100%;padding:10px 13px;background:var(--card2);border:1px solid var(--border);border-radius:13px;color:var(--text);font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none;margin-bottom:7px;-webkit-user-select:text;user-select:text;}
 .campo-obs::placeholder{color:var(--muted);}
+.pgto-sec{margin-bottom:8px;}
+.pgto-titulo{font-size:13px;font-weight:800;color:#fff;margin-bottom:8px;}
+.pgto-opcoes{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.pgto-btn{padding:11px 8px;border-radius:12px;background:var(--card2);border:1px solid var(--border);color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.pgto-btn.ativo{background:rgba(251,191,36,0.12);border-color:var(--dourado);color:var(--dourado);}
 .valor-card{background:rgba(251,191,36,0.07);border:1px solid var(--border);border-radius:13px;padding:10px 14px;margin-bottom:8px;display:none;}
 .valor-num{font-size:22px;font-weight:900;color:var(--dourado);}
 .valor-info{font-size:11px;color:var(--muted);}
@@ -424,6 +440,22 @@ input[type=file]{display:none;}
         <div><div class="campo-label">Nome completo</div><input class="campo-input" id="cad-nome" type="text" placeholder="Seu nome" autocomplete="name"/></div>
         <div><div class="campo-label">WhatsApp</div><input class="campo-input" id="cad-fone" type="tel" placeholder="(19) 99999-9999"/></div>
         <div><div class="campo-label">CPF *</div><input class="campo-input" id="cad-cpf" type="text" inputmode="numeric" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)"/></div>
+        <div><div class="campo-label">Senha *</div><input class="campo-input" id="cad-senha" type="password" placeholder="Crie uma senha (mín. 4 dígitos)" autocomplete="new-password"/></div>
+        <div class="seg-box">
+          <div class="seg-titulo">🔐 Recuperação de senha</div>
+          <div class="seg-desc">Caso esqueça a senha, você poderá redefini-la respondendo esta pergunta.</div>
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <select class="campo-input" id="cad-pergunta">
+              <option value="">Escolha uma pergunta de segurança</option>
+              <option value="Qual o nome do seu primeiro animal de estimação?">Nome do seu primeiro animal de estimação?</option>
+              <option value="Qual a cidade onde você nasceu?">Cidade onde você nasceu?</option>
+              <option value="Qual o nome de solteira da sua mãe?">Nome de solteira da sua mãe?</option>
+              <option value="Qual o nome da sua primeira escola?">Nome da sua primeira escola?</option>
+              <option value="Qual o seu prato favorito?">Seu prato favorito?</option>
+            </select>
+            <input class="campo-input" id="cad-resposta" type="text" placeholder="Sua resposta"/>
+          </div>
+        </div>
         <div class="emerg-box">
           <div class="emerg-titulo">🛡️ Para sua segurança</div>
           <div class="emerg-desc">Deixe um contato de emergência. Em caso de necessidade, poderemos acioná-lo.</div>
@@ -440,6 +472,10 @@ input[type=file]{display:none;}
           </div>
           <input type="file" id="inp-foto-cad" accept="image/*" onchange="processarFoto(this,'foto-prev-cad','foto-txt-cad')"/>
         </div>
+        <label class="termos-check">
+          <input type="checkbox" id="cad-termos"/>
+          <span>Li e aceito os <a onclick="event.preventDefault();document.getElementById('modal-termos').classList.add('show')">Termos de Uso e Política de Responsabilidade</a></span>
+        </label>
         <button class="btn-p" onclick="cadastrar()">Criar minha conta</button>
         <button class="btn-sec" onclick="entrarSemConta()">Continuar sem cadastro</button>
       </div>
@@ -447,7 +483,9 @@ input[type=file]{display:none;}
     <div id="form-ent" style="display:none;">
       <div style="display:flex;flex-direction:column;gap:10px;">
         <div><div class="campo-label">WhatsApp</div><input class="campo-input" id="ent-fone" type="tel" placeholder="(19) 99999-9999"/></div>
+        <div><div class="campo-label">Senha</div><input class="campo-input" id="ent-senha" type="password" placeholder="Sua senha" autocomplete="current-password"/></div>
         <button class="btn-p" onclick="entrar()">Entrar</button>
+        <button class="btn-link" onclick="abrirRecuperar()" style="background:none;border:none;color:var(--dourado);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;padding:6px;">Esqueci minha senha</button>
         <button class="btn-sec" onclick="entrarSemConta()">Continuar sem cadastro</button>
       </div>
     </div>
@@ -500,6 +538,16 @@ input[type=file]{display:none;}
       <div class="origem-txt" id="origem-txt">Obtendo sua localização...</div>
     </div>
     <input class="campo-obs" id="campo-obs" type="text" placeholder="Observação (ponto de referência)..." autocomplete="off"/>
+    <div class="pgto-sec">
+      <div class="pgto-titulo">💰 Forma de pagamento</div>
+      <div class="pgto-opcoes">
+        <button class="pgto-btn ativo" data-pgto="Dinheiro" onclick="selPgto(this,'Dinheiro')">💵 Dinheiro</button>
+        <button class="pgto-btn" data-pgto="Pix" onclick="selPgto(this,'Pix')">📱 Pix</button>
+        <button class="pgto-btn" data-pgto="Débito" onclick="selPgto(this,'Débito')">💳 Débito</button>
+        <button class="pgto-btn" data-pgto="Crédito" onclick="selPgto(this,'Crédito')">💳 Crédito</button>
+      </div>
+      <input class="campo-obs" id="campo-troco" type="text" placeholder="Vai pagar com quanto? (ex: R$ 50 - p/ troco)" autocomplete="off" style="margin-top:7px;"/>
+    </div>
     <div class="valor-card" id="valor-card">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div><div class="valor-num" id="valor-num">R$ --</div><div class="valor-info" id="valor-dist">calculando...</div></div>
@@ -705,7 +753,7 @@ input[type=file]{display:none;}
 
   <div class="perf-sec-tit">Atalhos</div>
   <div class="perf-acoes">
-    <button class="perf-acao" onclick="document.getElementById('modal-cred').classList.add('show')"><span>💳</span> Comprar créditos</button>
+    <button class="perf-acao" onclick="toast('💳 Compra de créditos disponível em breve! Por enquanto, combine o valor direto com o motorista.')"><span>💳</span> Comprar créditos</button>
     <button class="perf-acao" onclick="abrirAgendada()"><span>📅</span> Agendar corrida</button>
     <button class="perf-acao" onclick="abrirIndicar()"><span>🎁</span> Indicar amigo</button>
     <button class="perf-acao" onclick="abrirConfig()"><span>⚙️</span> Configurações</button>
@@ -744,6 +792,69 @@ input[type=file]{display:none;}
     </div>
     <button class="btn-salvar" onclick="salvarPerfil()" style="width:100%;padding:15px;border-radius:14px;background:linear-gradient(135deg,var(--dourado2),var(--dourado));border:none;color:#1a1a1a;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit;margin-bottom:9px;">Salvar alterações</button>
     <button class="btn-cancel" onclick="fecharEditarPerfil()" style="width:100%;padding:13px;border-radius:14px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL RECUPERAR SENHA -->
+<div class="modal-base" id="modal-recuperar">
+  <div class="modal-sheet">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:3px;margin:0 auto 16px;"></div>
+    <div style="font-size:18px;font-weight:900;color:#fff;text-align:center;margin-bottom:8px;">🔐 Recuperar senha</div>
+    <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:18px;">Informe seu WhatsApp e responda a pergunta de segurança</div>
+    <div id="rec-passo1">
+      <div style="margin-bottom:11px;"><div class="campo-label">WhatsApp</div><input class="campo-input" id="rec-fone" type="tel" placeholder="(19) 99999-9999"/></div>
+      <button class="btn-p" onclick="recBuscar()" style="width:100%;">Continuar</button>
+    </div>
+    <div id="rec-passo2" style="display:none;">
+      <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);border-radius:13px;padding:13px;margin-bottom:11px;">
+        <div style="font-size:11px;color:#60a5fa;font-weight:700;margin-bottom:5px;">PERGUNTA DE SEGURANÇA</div>
+        <div id="rec-pergunta" style="font-size:14px;color:#fff;font-weight:600;">--</div>
+      </div>
+      <div style="margin-bottom:11px;"><div class="campo-label">Sua resposta</div><input class="campo-input" id="rec-resposta" type="text" placeholder="Resposta"/></div>
+      <div style="margin-bottom:11px;"><div class="campo-label">Nova senha</div><input class="campo-input" id="rec-nova" type="password" placeholder="Crie a nova senha"/></div>
+      <button class="btn-p" onclick="recRedefinir()" style="width:100%;margin-bottom:9px;">Redefinir senha</button>
+      <button onclick="recFalarAdmin()" style="width:100%;padding:13px;border-radius:13px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);color:#ef4444;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Não consigo lembrar — Falar com administrador</button>
+    </div>
+    <button class="btn-cancel" onclick="document.getElementById('modal-recuperar').classList.remove('show')" style="width:100%;padding:13px;border-radius:14px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:9px;">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL TERMOS -->
+<div class="modal-base" id="modal-termos">
+  <div class="modal-sheet" style="max-height:90vh;">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:3px;margin:0 auto 16px;"></div>
+    <div style="font-size:17px;font-weight:900;color:#fff;text-align:center;margin-bottom:4px;">Termos de Uso</div>
+    <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:16px;">Corrida Já · Política de Responsabilidade</div>
+    <div class="termos-texto">
+      <h4>1. Sobre a plataforma</h4>
+      <p>O Corrida Já é uma plataforma tecnológica que conecta passageiros a motoristas particulares independentes. Não somos uma empresa de transporte, não possuímos frota, não empregamos motoristas e não prestamos diretamente o serviço de transporte. A relação de transporte é estabelecida exclusivamente entre passageiro e motorista.</p>
+      <h4>2. Cadastro e acesso</h4>
+      <p>O usuário deve fornecer dados verdadeiros (nome, CPF, telefone). O acesso é protegido por senha pessoal e intransferível, sendo o titular responsável por toda atividade na conta. O cadastro é individual. Passageiros menores de idade devem usar o serviço acompanhados de responsável legal.</p>
+      <h4>3. Forma de pagamento</h4>
+      <p>O valor da corrida é combinado diretamente entre passageiro e motorista. O passageiro deve informar corretamente a forma de pagamento escolhida (dinheiro, Pix, débito ou crédito) para que o motorista decida se aceita a corrida. A disponibilidade de maquininha de cartão é de responsabilidade exclusiva do motorista. A plataforma não recebe, não intermedeia e não se responsabiliza pelos pagamentos entre as partes.</p>
+      <h4>4. Responsabilidades do motorista</h4>
+      <p>O motorista declara possuir CNH válida com EAR quando exigido, veículo regularizado e em boas condições, e seguro vigente. É responsável por conduzir com segurança, pela integridade dos passageiros, e por multas, acidentes ou danos durante a corrida. Atua como profissional autônomo, sem vínculo empregatício com a plataforma. O motorista pode recusar corridas a seu critério.</p>
+      <h4>5. Responsabilidades do passageiro</h4>
+      <p>O passageiro deve fornecer informações corretas, tratar o motorista com respeito, não transportar materiais ilícitos, zelar pelo veículo e efetuar o pagamento combinado. É responsável por seus pertences durante a corrida.</p>
+      <h4>6. Animais e bagagem</h4>
+      <p>O transporte de animais de estimação e de bagagem volumosa deve ser combinado previamente com o motorista pelo chat, antes do início da corrida. O motorista tem o direito de recusar a corrida caso não concorde com o transporte de animais, bagagem ou outras condições.</p>
+      <h4>7. Créditos (motorista)</h4>
+      <p>Os créditos são utilizados pelo motorista para receber pedidos de corrida. Ao aceitar uma corrida, os créditos são descontados conforme a distância (valores consultáveis no aplicativo do motorista e sujeitos a alteração). Se a corrida for cancelada, os créditos são devolvidos automaticamente ao motorista. Caso o crédito se esgote, o motorista deixa de receber pedidos até nova recarga. Os créditos não são reembolsáveis: créditos adquiridos e não utilizados não geram direito a devolução.</p>
+      <h4>8. Relação entre as partes</h4>
+      <p>A corrida é um acordo direto entre passageiro e motorista. Conflitos, danos ou prejuízos devem ser resolvidos diretamente entre eles, podendo recorrer aos meios legais. A plataforma não tem obrigação de intervir ou arbitrar conflitos.</p>
+      <h4>9. Isenção de responsabilidade</h4>
+      <p>Na máxima extensão permitida por lei, o Corrida Já não se responsabiliza por: acidentes de trânsito, danos materiais ou pessoais; furtos, roubos ou atos ilícitos; atrasos, cancelamentos ou condutas das partes; condições do veículo; veracidade das informações dos usuários; ou prejuízos indiretos. A plataforma é fornecida "no estado em que se encontra", podendo apresentar instabilidades.</p>
+      <h4>10. Segurança e botão SOS</h4>
+      <p>O botão SOS e o compartilhamento de localização são ferramentas auxiliares e não substituem os serviços oficiais de emergência. Em situação de risco, acione imediatamente a Polícia (190), o SAMU (192) ou os Bombeiros (193).</p>
+      <h4>11. Proteção de dados (LGPD)</h4>
+      <p>Em conformidade com a Lei nº 13.709/2018, coletamos dados pessoais (nome, CPF, telefone, localização, foto, contato de emergência) para viabilizar o serviço de intermediação, comunicação entre as partes e segurança. O usuário pode solicitar a exclusão de seus dados, ressalvado o que deva ser mantido por obrigação legal.</p>
+      <h4>12. Conduta proibida</h4>
+      <p>É vedado usar o aplicativo para fins ilícitos, assediar ou agredir usuários, fornecer informações falsas ou tentar fraudar o sistema. O descumprimento pode resultar em suspensão ou exclusão da conta.</p>
+      <h4>13. Disposições gerais</h4>
+      <p>Estes termos podem ser atualizados a qualquer momento. O uso continuado implica aceitação. Fica eleito o foro da comarca de Holambra/SP para dirimir conflitos. Ao concluir o cadastro, o usuário declara ter lido e aceito integralmente estes termos.</p>
+    </div>
+    <button class="btn-p" onclick="document.getElementById('cad-termos').checked=true;document.getElementById('modal-termos').classList.remove('show')" style="width:100%;margin-top:14px;">Li e aceito</button>
+    <button class="btn-cancel" onclick="document.getElementById('modal-termos').classList.remove('show')" style="width:100%;padding:13px;border-radius:14px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:9px;">Fechar</button>
   </div>
 </div>
 
@@ -835,7 +946,7 @@ input[type=file]{display:none;}
     <div class="menu-item" id="notif-item" onclick="toggleNotifMenu()">🔔 Notificações ativadas</div>
     <div class="menu-item" onclick="fecharMenu();irPara('perfil');setTimeout(()=>document.getElementById('hist-lista').scrollIntoView({behavior:'smooth'}),400)">🕐 Histórico de corridas</div>
     <div class="menu-sep"></div>
-    <div class="menu-item" onclick="document.getElementById('modal-cred').classList.add('show');fecharMenu()">💳 Comprar créditos (Pix)</div>
+    <div class="menu-item" onclick="toast('💳 Compra de créditos disponível em breve! Por enquanto, combine o valor direto com o motorista.');fecharMenu()">💳 Comprar créditos (Pix)</div>
     <div class="menu-item" onclick="abrirAgendada();fecharMenu()">📅 Agendar corrida</div>
     <div class="menu-sep"></div>
     <div class="menu-item" onclick="abrirIndicar();fecharMenu()">🎁 Indicar amigo</div>
@@ -1037,17 +1148,93 @@ function validarCPF(cpf){
 
 // ── LOGIN ──
 function altTab(t){["cad","ent"].forEach(x=>{document.getElementById("form-"+x).style.display="none";document.getElementById("tab-"+x).classList.remove("ativo");});document.getElementById("form-"+t).style.display="block";document.getElementById("tab-"+t).classList.add("ativo");}
+// ── RECUPERAR SENHA ──
+const ADMIN_WHATSAPP="5519982480386"; // configurável no painel admin futuramente
+let recUserDoc=null;
+function abrirRecuperar(){
+  document.getElementById("modal-recuperar").classList.add("show");
+  document.getElementById("rec-passo1").style.display="block";
+  document.getElementById("rec-passo2").style.display="none";
+  document.getElementById("rec-fone").value=document.getElementById("ent-fone")?.value||"";
+  document.getElementById("rec-resposta").value="";
+  document.getElementById("rec-nova").value="";
+  recUserDoc=null;
+}
+async function recBuscar(){
+  const fone=document.getElementById("rec-fone").value.trim();
+  if(!fone){toast("Informe seu WhatsApp");return;}
+  loading(true);
+  try{
+    const snap=await db.collection("cj_passageiros").where("fone","==",fone).limit(1).get();
+    if(snap.empty){loading(false);toast("Número não encontrado.");return;}
+    recUserDoc={id:snap.docs[0].id,...snap.docs[0].data()};
+    loading(false);
+    if(!recUserDoc.pergunta){
+      toast("Sua conta não tem pergunta de segurança. Fale com o administrador.");
+      return;
+    }
+    document.getElementById("rec-pergunta").textContent=recUserDoc.pergunta;
+    document.getElementById("rec-passo1").style.display="none";
+    document.getElementById("rec-passo2").style.display="block";
+  }catch(e){loading(false);toast("Erro ao buscar.");}
+}
+async function recRedefinir(){
+  const resp=(document.getElementById("rec-resposta").value||"").trim().toLowerCase();
+  const nova=(document.getElementById("rec-nova").value||"").trim();
+  if(!resp){toast("Responda a pergunta");return;}
+  if(nova.length<4){toast("Nova senha: mínimo 4 dígitos");return;}
+  if(!recUserDoc){toast("Erro. Tente novamente.");return;}
+  if(recUserDoc.respostaHash!==hashSenha(resp)){toast("Resposta incorreta.");return;}
+  loading(true);
+  try{
+    await db.collection("cj_passageiros").doc(recUserDoc.id).update({senhaHash:hashSenha(nova)});
+    loading(false);
+    document.getElementById("modal-recuperar").classList.remove("show");
+    toast("Senha redefinida! Faça login. ✓");
+    altTab("ent");
+  }catch(e){loading(false);toast("Erro ao redefinir.");}
+}
+function recFalarAdmin(){
+  const fone=document.getElementById("rec-fone").value.trim();
+  const nome=recUserDoc?recUserDoc.nome:"--";
+  const msg=encodeURIComponent(`Olá! Preciso recuperar minha senha do Corrida Já.\nNome: ${nome}\nWhatsApp: ${fone}`);
+  window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${msg}`,"_blank");
+}
+
+// ── HASH SENHA ──
+function hashSenha(s){
+  let h=5381;const str=String(s);
+  for(let i=0;i<str.length;i++){h=((h<<5)+h+str.charCodeAt(i))>>>0;}
+  // segunda passada pra reforçar
+  let h2=52711;for(let i=str.length-1;i>=0;i--){h2=((h2<<5)+h2+str.charCodeAt(i))>>>0;}
+  return "h"+h.toString(36)+h2.toString(36);
+}
+
 async function cadastrar(){
   const nome=document.getElementById("cad-nome").value.trim();
   const fone=document.getElementById("cad-fone").value.trim();
   const cpfVal=(document.getElementById("cad-cpf")?.value||"").trim();
+  const senha=(document.getElementById("cad-senha")?.value||"").trim();
+  const pergunta=(document.getElementById("cad-pergunta")?.value||"").trim();
+  const resposta=(document.getElementById("cad-resposta")?.value||"").trim();
   if(!nome||!fone){toast("Preencha nome e WhatsApp");return;}
   if(!validarCPF(cpfVal)){toast("Digite um CPF válido");return;}
+  if(senha.length<4){toast("Crie uma senha de pelo menos 4 dígitos");return;}
+  if(!pergunta){toast("Escolha uma pergunta de segurança");return;}
+  if(!resposta){toast("Responda a pergunta de segurança");return;}
+  if(!document.getElementById("cad-termos")?.checked){toast("Você precisa aceitar os Termos de Uso");return;}
   loading(true);
   try{
+    // verificar se telefone já existe
+    const ex=await db.collection("cj_passageiros").where("fone","==",fone).limit(1).get();
+    if(!ex.empty){loading(false);toast("Este WhatsApp já está cadastrado. Use 'Entrar'.");return;}
     const id="pass_"+Date.now();
     const dados={id,nome,fone,
       cpf:(document.getElementById("cad-cpf")?.value||"").trim(),
+      senhaHash:hashSenha(senha),
+      pergunta:pergunta,
+      respostaHash:hashSenha(resposta.toLowerCase()),
+      termosAceitos:true,termosData:new Date().toISOString(),
       emergNome:(document.getElementById("cad-emerg-nome")?.value||"").trim(),
       emergFone:(document.getElementById("cad-emerg-fone")?.value||"").trim(),
       foto:fotoFinalCad||null,tipo:"cadastrado",totalCorridas:0,criadoEm:new Date().toISOString()};
@@ -1058,13 +1245,23 @@ async function cadastrar(){
 }
 async function entrar(){
   const fone=document.getElementById("ent-fone").value.trim();
+  const senha=(document.getElementById("ent-senha")?.value||"").trim();
   if(!fone){toast("Informe seu WhatsApp");return;}
+  if(!senha){toast("Informe sua senha");return;}
   loading(true);
   try{
     const snap=await db.collection("cj_passageiros").where("fone","==",fone).limit(1).get();
     if(snap.empty){toast("Número não encontrado.");loading(false);return;}
-    user={id:snap.docs[0].id,...snap.docs[0].data()};
-    localStorage.setItem("cj_user",JSON.stringify(user));
+    const dados={id:snap.docs[0].id,...snap.docs[0].data()};
+    // Conta antiga sem senha: define a senha digitada agora (migração)
+    if(!dados.senhaHash){
+      await db.collection("cj_passageiros").doc(dados.id).update({senhaHash:hashSenha(senha)});
+      dados.senhaHash=hashSenha(senha);
+      toast("Senha definida para sua conta! ✓");
+    }else if(dados.senhaHash!==hashSenha(senha)){
+      loading(false);toast("Senha incorreta.");return;
+    }
+    user=dados;localStorage.setItem("cj_user",JSON.stringify(user));
     loading(false);irPara("home");pedirNotif();
   }catch(e){loading(false);toast("Erro ao entrar.");}
 }
@@ -1398,6 +1595,15 @@ function confirmarDestMapa(){
 }
 
 // ── CHAMAR CORRIDA ──
+let formaPgto="Dinheiro";
+function selPgto(btn,forma){
+  formaPgto=forma;
+  document.querySelectorAll(".pgto-btn").forEach(b=>b.classList.remove("ativo"));
+  btn.classList.add("ativo");
+  const troco=document.getElementById("campo-troco");
+  if(troco)troco.style.display=(forma==="Dinheiro")?"block":"none";
+}
+
 async function chamarCorrida(){
   if(!destSel){toast("Selecione o destino");return;}
   if(!posAtual){toast("Aguarde obter sua localização");return;}
@@ -1406,7 +1612,7 @@ async function chamarCorrida(){
   try{
     const km=dKm(posAtual[0],posAtual[1],destSel.lat,destSel.lng),val=tabela(km);
     const id="cor_"+Date.now();
-    const corrida={id,status:"aguardando",clienteId:user.id,clienteNome:user.nome,clienteFone:user.fone||"",clienteFoto:user.foto||null,clienteTipo:user.tipo||"cadastrado",origemLat:posAtual[0],origemLng:posAtual[1],destino:destSel.nome.split(",").slice(0,2).join(","),destinoLat:destSel.lat,destinoLng:destSel.lng,obs:document.getElementById("campo-obs").value.trim()||null,valorEstimado:destSel.valorEst||"R$ "+val.toFixed(2).replace(".",","),distanciaKm:destSel.distKm||km.toFixed(1),criadoEm:firebase.firestore.FieldValue.serverTimestamp()};
+    const corrida={id,status:"aguardando",clienteId:user.id,clienteNome:user.nome,clienteFone:user.fone||"",clienteFoto:user.foto||null,clienteTipo:user.tipo||"cadastrado",origemLat:posAtual[0],origemLng:posAtual[1],destino:destSel.nome.split(",").slice(0,2).join(","),destinoLat:destSel.lat,destinoLng:destSel.lng,obs:document.getElementById("campo-obs").value.trim()||null,formaPgto:formaPgto,trocoPara:(formaPgto==="Dinheiro"?(document.getElementById("campo-troco")?.value.trim()||null):null),valorEstimado:destSel.valorEst||"R$ "+val.toFixed(2).replace(".",","),distanciaKm:destSel.distKm||km.toFixed(1),criadoEm:firebase.firestore.FieldValue.serverTimestamp()};
     await db.collection("cj_corridas").doc(id).set(corrida);
     corridaAtiva={...corrida,id};loading(false);
     mostrarTela("tela-buscando");
@@ -1614,7 +1820,7 @@ function atualizarHome(){
   if(!user)return;
   const h=new Date().getHours();
   document.getElementById("saudacao").textContent=h<12?"Bom dia!":h<18?"Boa tarde!":"Boa noite!";
-  document.getElementById("home-nome").textContent=user.nome||"";
+  document.getElementById("home-nome").textContent=(user.nome||"").trim().split(" ")[0];
   const av=document.getElementById("home-avatar");
   if(user.foto)av.innerHTML=`<img src="${user.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;
   else av.innerHTML=`<span style="font-size:15px;font-weight:700;color:var(--dourado);">${(user.nome||"P")[0].toUpperCase()}</span>`;
