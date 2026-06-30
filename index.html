@@ -414,6 +414,13 @@ input[type=file]{display:none;}
 #loading{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9998;align-items:center;justify-content:center;}
 #loading.show{display:flex;}
 .ld-spin{width:44px;height:44px;border:3px solid rgba(251,191,36,0.12);border-top-color:var(--dourado);border-radius:50%;animation:spin 0.8s linear infinite;}
+.ped-av-outer{position:relative;width:104px;height:104px;}
+.ped-av-ring{position:relative;width:104px;height:104px;border-radius:50%;padding:4px;overflow:hidden;background:var(--nivel-grad,conic-gradient(#cd7f32,#f0b97d,#8b5a2b,#cd7f32));}
+.ped-av-ring::before{content:"";position:absolute;top:50%;left:50%;width:150%;height:150%;border-radius:50%;background:var(--nivel-grad,conic-gradient(#cd7f32,#f0b97d,#8b5a2b,#cd7f32));animation:giraRot 3s linear infinite;}
+.ped-av-big{position:relative;z-index:1;width:96px;height:96px;border-radius:50%;background:var(--card2);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:40px;}
+.ped-av-big img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.ped-badge{background:rgba(251,191,36,0.12);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:#ffe9b0;}
+.ped-comentario{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:11px 13px;margin-bottom:12px;}
 </style>
 </head>
 <body>
@@ -445,6 +452,7 @@ input[type=file]{display:none;}
         <div><div class="campo-label">Nome completo</div><input class="campo-input" id="cad-nome" type="text" placeholder="Seu nome" autocomplete="name"/></div>
         <div><div class="campo-label">WhatsApp</div><input class="campo-input" id="cad-fone" type="tel" placeholder="(19) 99999-9999"/></div>
         <div><div class="campo-label">CPF *</div><input class="campo-input" id="cad-cpf" type="text" inputmode="numeric" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)"/></div>
+        <div><div class="campo-label">Data de nascimento *</div><input class="campo-input" id="cad-nasc" type="date" placeholder="dd/mm/aaaa"/></div>
         <div><div class="campo-label">Senha *</div><input class="campo-input" id="cad-senha" type="password" placeholder="Crie uma senha (mín. 4 dígitos)" autocomplete="new-password"/></div>
         <div class="seg-box">
           <div class="seg-titulo">🔐 Recuperação de senha</div>
@@ -629,12 +637,24 @@ input[type=file]{display:none;}
 <!-- MODAL PERFIL MOTORISTA -->
 <div id="modal-mot" onclick="this.classList.remove('show')">
   <div class="mot-modal-box" onclick="event.stopPropagation()">
-    <div class="mot-modal-foto" id="mm-foto">🚗</div>
-    <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:3px;" id="mm-nome">--</div>
+    <div class="ped-av-outer" style="margin:0 auto 12px;">
+      <div class="ped-av-ring" id="mm-av-ring">
+        <div class="ped-av-big" id="mm-foto"><span>🚗</span></div>
+      </div>
+    </div>
+    <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:5px;" id="mm-nome">--</div>
+    <div style="display:flex;gap:7px;align-items:center;justify-content:center;margin-bottom:6px;">
+      <div class="ped-badge" id="mm-nivel">🥉 Bronze</div>
+    </div>
     <div style="font-size:12px;color:var(--muted);margin-bottom:13px;" id="mm-info">--</div>
     <div style="display:flex;gap:9px;margin-bottom:13px;">
       <div style="flex:1;background:var(--card2);border-radius:12px;padding:10px;"><div style="font-size:14px;font-weight:800;color:#fff;" id="mm-placa">--</div><div style="font-size:10px;color:var(--muted);">Placa</div></div>
       <div style="flex:1;background:var(--card2);border-radius:12px;padding:10px;"><div style="font-size:14px;font-weight:800;color:var(--dourado);" id="mm-aval">--</div><div style="font-size:10px;color:var(--muted);">Avaliação</div></div>
+      <div style="flex:1;background:var(--card2);border-radius:12px;padding:10px;"><div style="font-size:14px;font-weight:800;color:#fff;" id="mm-corridas">--</div><div style="font-size:10px;color:var(--muted);">Corridas</div></div>
+    </div>
+    <div class="ped-comentario" id="mm-comentario-wrap" style="display:none;text-align:left;">
+      <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:3px;">💬 ÚLTIMO COMENTÁRIO RECEBIDO</div>
+      <div style="font-size:13px;color:var(--text);font-style:italic;" id="mm-comentario">--</div>
     </div>
     <div style="font-size:11px;color:var(--muted);margin-bottom:13px;">⚠️ Confirme que este é o motorista antes de entrar no veículo</div>
     <button onclick="document.getElementById('modal-mot').classList.remove('show')" style="width:100%;padding:12px;border-radius:13px;background:var(--azul2);border:1px solid var(--border);color:var(--dourado);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Fechar</button>
@@ -662,18 +682,19 @@ input[type=file]{display:none;}
   <div class="modal-sheet">
     <div style="text-align:center;margin-bottom:16px;">
       <div style="font-size:26px;margin-bottom:7px;">⭐</div>
-      <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:3px;">Como foi sua corrida?</div>
-      <div style="font-size:12px;color:var(--muted);" id="aval-nome">Avalie o motorista</div>
+      <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:3px;">Como foi com <span id="aval-nome">o motorista</span>?</div>
+      <div style="font-size:11px;color:var(--muted);">Sua avaliação é obrigatória para continuar usando o app</div>
     </div>
-    <div style="display:flex;justify-content:center;gap:9px;margin-bottom:20px;" id="estrelas">
+    <div style="display:flex;justify-content:center;gap:9px;margin-bottom:18px;" id="estrelas">
       <span class="estrela" onclick="selEstrela(1)">★</span>
       <span class="estrela" onclick="selEstrela(2)">★</span>
       <span class="estrela" onclick="selEstrela(3)">★</span>
       <span class="estrela" onclick="selEstrela(4)">★</span>
       <span class="estrela" onclick="selEstrela(5)">★</span>
     </div>
-    <button class="btn-ok" onclick="enviarAval()">Avaliar</button>
-    <button class="btn-cancel" onclick="fecharAval()">Pular</button>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:7px;">Comentário (opcional)</div>
+    <textarea id="aval-comentario" placeholder="Como foi a corrida com este motorista?" style="width:100%;min-height:90px;background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:12px;color:var(--text);font-family:inherit;font-size:13px;resize:none;margin-bottom:16px;"></textarea>
+    <button class="btn-ok" onclick="enviarAval()" style="width:100%;">Enviar avaliação</button>
   </div>
 </div>
 
@@ -737,6 +758,7 @@ input[type=file]{display:none;}
     <div class="perf-info-row"><span class="perf-info-ic">👤</span><div class="perf-info-txt"><div class="perf-info-lb">Nome completo</div><div class="perf-info-vl" id="pi-nome">--</div></div></div>
     <div class="perf-info-row"><span class="perf-info-ic">📱</span><div class="perf-info-txt"><div class="perf-info-lb">WhatsApp</div><div class="perf-info-vl" id="pi-fone">--</div></div></div>
     <div class="perf-info-row"><span class="perf-info-ic">🪪</span><div class="perf-info-txt"><div class="perf-info-lb">CPF</div><div class="perf-info-vl" id="pi-cpf">--</div></div></div>
+    <div class="perf-info-row"><span class="perf-info-ic">🎂</span><div class="perf-info-txt"><div class="perf-info-lb">Idade</div><div class="perf-info-vl" id="pi-idade">--</div></div></div>
     <div class="perf-info-row"><span class="perf-info-ic">🎫</span><div class="perf-info-txt"><div class="perf-info-lb">Código de indicação</div><div class="perf-info-vl" id="pi-codigo">--</div></div></div>
   </div>
 
@@ -1259,11 +1281,15 @@ async function cadastrar(){
   const nome=document.getElementById("cad-nome").value.trim();
   const fone=document.getElementById("cad-fone").value.trim();
   const cpfVal=(document.getElementById("cad-cpf")?.value||"").trim();
+  const nascVal=(document.getElementById("cad-nasc")?.value||"").trim();
   const senha=(document.getElementById("cad-senha")?.value||"").trim();
   const pergunta=(document.getElementById("cad-pergunta")?.value||"").trim();
   const resposta=(document.getElementById("cad-resposta")?.value||"").trim();
   if(!nome||!fone){toast("Preencha nome e WhatsApp");return;}
   if(!validarCPF(cpfVal)){toast("Digite um CPF válido");return;}
+  if(!nascVal){toast("Informe sua data de nascimento");return;}
+  const idadeCad=calcularIdadeCad(nascVal);
+  if(idadeCad===null||idadeCad<0||idadeCad>120){toast("Data de nascimento inválida");return;}
   if(senha.length<4){toast("Crie uma senha de pelo menos 4 dígitos");return;}
   if(!pergunta){toast("Escolha uma pergunta de segurança");return;}
   if(!resposta){toast("Responda a pergunta de segurança");return;}
@@ -1276,6 +1302,7 @@ async function cadastrar(){
     const id="pass_"+Date.now();
     const dados={id,nome,fone,
       cpf:(document.getElementById("cad-cpf")?.value||"").trim(),
+      dataNascimento:nascVal,
       senhaHash:hashSenha(senha),
       pergunta:pergunta,
       respostaHash:hashSenha(resposta.toLowerCase()),
@@ -1287,6 +1314,14 @@ async function cadastrar(){
     user=dados;localStorage.setItem("cj_user",JSON.stringify(user));
     loading(false);irPara("home");pedirNotif();
   }catch(e){loading(false);toast("Erro: "+e.message);}
+}
+function calcularIdadeCad(dataNasc){
+  if(!dataNasc)return null;
+  const hoje=new Date(),nasc=new Date(dataNasc+"T00:00:00");
+  let idade=hoje.getFullYear()-nasc.getFullYear();
+  const m=hoje.getMonth()-nasc.getMonth();
+  if(m<0||(m===0&&hoje.getDate()<nasc.getDate()))idade--;
+  return idade;
 }
 async function entrar(){
   const fone=document.getElementById("ent-fone").value.trim();
@@ -1726,7 +1761,7 @@ function mostrarTelaCorrente(d){
   document.getElementById("mot-placa").textContent=m.placa||"--";
   document.getElementById("corrida-valor").textContent=d.valorEstimado||"--";
   const fone=(m.fone||"").replace(/\D/g,"");
-  document.getElementById("btn-zap").onclick=()=>window.open("https://wa.me/55"+fone,"_blank");
+  const btnZapEl=document.getElementById("btn-zap");if(btnZapEl)btnZapEl.onclick=()=>window.open("https://wa.me/55"+fone,"_blank");
   mostrarTela("tela-corrida");
   iniciarMapaCorrida(d);
   iniciarChat(d.id||corridaAtiva.id);
@@ -1742,17 +1777,39 @@ async function cancelarCorrida(){
 }
 
 // ── PERFIL MOT ──
-function verPerfilMot(){
+async function verPerfilMot(){
   if(!corridaAtiva?.motorista)return;
   const m=corridaAtiva.motorista;
   document.getElementById("modal-mot").classList.add("show");
   const fEl=document.getElementById("mm-foto");
-  if(m.foto)fEl.innerHTML=`<img src="${m.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;else fEl.textContent="🚗";
+  if(m.foto)fEl.innerHTML=`<img src="${m.foto}"/>`;else fEl.innerHTML="<span>🚗</span>";
   document.getElementById("mm-nome").textContent=m.nome||"--";
   const v={moto:"🏍️ Moto",carro:"🚗 Carro",van:"🚐 Van"};
   document.getElementById("mm-info").textContent=(v[m.veiculo]||m.veiculo||"")+" • "+m.placa;
   document.getElementById("mm-placa").textContent=m.placa||"--";
   document.getElementById("mm-aval").textContent=m.avaliacao?"⭐ "+parseFloat(m.avaliacao).toFixed(1):"Novo";
+
+  // Buscar dados completos do motorista (nível, corridas, comentário)
+  let dadosMot=null;
+  try{
+    if(m.id){const snap=await db.collection("cj_motoristas").doc(m.id).get();if(snap.exists)dadosMot=snap.data();}
+  }catch(e){}
+
+  const tc=dadosMot?.totalCorridas||0;
+  document.getElementById("mm-corridas").textContent=tc;
+  let nivel="🥉 Bronze",grad="conic-gradient(#cd7f32,#f0b97d,#8b5a2b,#cd7f32)";
+  if(tc>=50){nivel="💎 Diamante";grad="conic-gradient(#b9f2ff,#7fd4e8,#5fa8d3,#a0e9ff,#b9f2ff)";}
+  else if(tc>=20){nivel="🥇 Ouro";grad="conic-gradient(#ffd700,#fff3a0,#daa520,#ffd700)";}
+  else if(tc>=5){nivel="🥈 Prata";grad="conic-gradient(#c0c0c0,#f5f5f5,#a8a8a8,#e8e8e8,#c0c0c0)";}
+  document.getElementById("mm-nivel").textContent=nivel;
+  const ring=document.getElementById("mm-av-ring");
+  if(ring)ring.style.setProperty("--nivel-grad",grad);
+
+  const comentWrap=document.getElementById("mm-comentario-wrap");
+  if(dadosMot?.ultimoComentarioRecebido){
+    document.getElementById("mm-comentario").textContent=`"${dadosMot.ultimoComentarioRecebido}"`;
+    comentWrap.style.display="block";
+  }else comentWrap.style.display="none";
 }
 
 // ── SOS / COMPARTILHAR ──
@@ -1801,9 +1858,36 @@ async function enviarMsg(){
 }
 
 // ── AVALIAÇÃO ──
-function mostrarAval(cId,nome){_avalId=cId;_avalNota=5;document.getElementById("aval-nome").textContent=nome||"motorista";selEstrela(5);document.getElementById("modal-aval").classList.add("show");}
+function mostrarAval(cId,nome){
+  _avalId=cId;_avalNota=5;
+  document.getElementById("aval-nome").textContent=nome||"o motorista";
+  document.getElementById("aval-comentario").value="";
+  selEstrela(5);
+  document.getElementById("modal-aval").classList.add("show");
+}
 function selEstrela(n){_avalNota=n;document.querySelectorAll(".estrela").forEach((e,i)=>e.classList.toggle("on",i<n));}
-async function enviarAval(){if(!_avalId)return;try{await db.collection("cj_corridas").doc(_avalId).update({avaliacaoPassageiro:_avalNota});}catch(e){}fecharAval();toast("Obrigado pela avaliação! ⭐");}
+async function enviarAval(){
+  if(!_avalId)return;
+  const comentario=(document.getElementById("aval-comentario")?.value||"").trim();
+  loading(true);
+  try{
+    await db.collection("cj_corridas").doc(_avalId).update({avaliacaoPassageiro:_avalNota,comentarioPassageiro:comentario||null});
+    // Atualiza o último comentário recebido pelo motorista (se houver)
+    if(comentario){
+      try{
+        const cSnap=await db.collection("cj_corridas").doc(_avalId).get();
+        const cData=cSnap.data();
+        if(cData?.motorista?.id){
+          await db.collection("cj_motoristas").doc(cData.motorista.id).update({ultimoComentarioRecebido:comentario});
+        }
+      }catch(e){}
+    }
+    loading(false);
+    localStorage.removeItem("cj_aval_pendente");
+    fecharAval();
+    toast("Obrigado pela avaliação! ⭐");
+  }catch(e){loading(false);toast("Erro ao enviar avaliação.");}
+}
 function fecharAval(){document.getElementById("modal-aval").classList.remove("show");}
 
 // ── ETA ──
@@ -1920,6 +2004,10 @@ function atualizarPerfil(){
   if(g("pi-nome"))g("pi-nome").textContent=user.nome||"--";
   if(g("pi-fone"))g("pi-fone").textContent=user.fone||"--";
   if(g("pi-cpf"))g("pi-cpf").textContent=user.cpf||"Não informado";
+  if(g("pi-idade")){
+    const idd=calcularIdadeCad(user.dataNascimento);
+    g("pi-idade").textContent=idd!==null?idd+" anos":"Não informada";
+  }
   if(g("pi-codigo"))g("pi-codigo").textContent=(user.id||"").slice(-6).toUpperCase()||"--";
   // Emergencia
   const temEmerg=user.emergNome&&user.emergFone;
